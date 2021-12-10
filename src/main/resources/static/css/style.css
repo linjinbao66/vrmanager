@@ -1,0 +1,105 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.content {
+    width: 650px;
+    height: 330px;
+    position: fixed;
+    left: 50%;
+    margin-left: -325px;
+    top: 50%;
+    margin-top: -165px;
+}
+
+.content .left {
+    width: 300px;
+    position: absolute;
+    left: 0;
+    height: 280px;
+    top: 25px;
+    background: #fff;
+    box-shadow: 0px 0px 40px 16px rgba(0, 0, 0, 0.1);
+}
+
+.content .left .p1 {
+    font-size: 32px;
+    font-weight: 900;
+    margin: 30px;
+    margin-left: 50px;
+    letter-spacing: 2px;
+    margin-top: 38px;
+}
+
+.content .left .p2 {
+    margin-left: 50px;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.content .right {
+    width: 350px;
+    position: absolute;
+    right: 0;
+    height: 330px;
+    top: 0;
+    background: #474a59;
+    box-shadow: 0px 0px 40px 16px rgba(0, 0, 0, 0.22);
+    padding: 50px;
+}
+
+.content .right input {
+    border: 0;
+    border-bottom: 1px solid #ccc;
+    background: none;
+    line-height: 38px;
+    width: 100%;
+    padding: 0 5px;
+    color: #fff;
+    padding-left: 50px;
+}
+
+.content .right button {
+    background: #f2f2f2;
+    color: #333;
+    line-height: 43px;
+    border: 0;
+    border-radius: 3px;
+    width: 100%;
+}
+
+.content .right button:hover {
+    background: #009688;
+    color: #fff;
+    cursor: pointer;
+}
+
+.content .right form > div {
+    margin-bottom: 20px;
+}
+
+.content .right .but {
+    margin-top: 30px;
+}
+
+.content .right .inp {
+    position: relative;
+}
+
+.content .right .inp span {
+    position: absolute;
+    left: 3px;
+    color: #fff;
+    letter-spacing: 1px;
+    display: block;
+    line-height: 38px;
+    top: 0;
+}
+
+.content .layui-form-switch {
+    height: 24px;
+    padding: 0px 15px;
+    margin: 0 auto;
+}

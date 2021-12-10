@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>班级管理</title>
+		<link rel="stylesheet" href="layui/css/layui.css">
+		<script src="js/util.js"></script>
+	</head>
+	<body>
+		<div class="layui-layout layui-layout-admin" style="margin-bottom: 50px;">
+			<div class="layui-header">
+
+				<ul class="layui-nav layui-row">
+					<li class="layui-nav-item layui-logo layui-bg-black layui-col-md1">
+						<img src="img/1.png" />虚拟实验管理平台
+					</li>
+					<li class="layui-nav-item layui-this layui-col-md1" id = "manageClazz">
+						<a href="javascript:;" >班级管理</a>
+					</li>
+					<li class="layui-nav-item layui-col-md1" id= "manageTeacher">
+					    <a href="teacher.html">教师管理</a>
+					</li>
+					<li class="layui-nav-item layui-col-md1" id="manageStudent">
+					    <a href="student.html">学生管理</a>
+					</li>
+					<li class="layui-nav-item layui-hide layui-show-md-inline-block layui-col-md2 layui-col-md-offset5" style="text-align: center;">
+						<a href="javascript:;">
+							<img src="img/6.png" class="layui-nav-img"> <label id="userinfo">管理员</label>
+						</a>
+						<dl class="layui-nav-child">
+							<dd><a href="profile.html">个人中心</a></dd>
+							<dd><a href="javascript:;" onclick="logout()">登出</a></dd>
+						</dl>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="layui-bg-gray" style="padding: 30px;">
+			<div class="layui-row layui-col-space15">
+				<div class="layui-col-md12">
+					<div class="layui-tab layui-tab-card" lay-filter="demo" lay-allowclose="true">
+						<ul class="layui-tab-title">
+							<li class="layui-this">班级</li>
+						</ul>
+						<div class="layui-tab-content">
+							<div class="layui-tab-item layui-show">
+								<table class="layui-hide" id="clazzTable" lay-filter="clazzTable"></table>
+								<script type="text/html" id="toolbarDemo">
+									<div class="layui-btn-container">
+										<button class="layui-btn layui-btn-danger" lay-event="delBatch">删除</button>
+										<button type="button" class="layui-btn" id="importBatch"><i class="layui-icon"></i>批量导入</button>
+									</div>
+								</script>
+								<script type="text/html" id="barDemo">
+									<button class="layui-btn layui-btn-xs" data-type="tabAdd" lay-event="viewScore">查看成绩</button>
+									<a class="layui-btn layui-btn-xs" lay-event="manageStudent">管理人员</a>
+								</script>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+			
+		<script src="layui/layui.js"></script>
+		<script>
+
+			function add(arg1, arg2) {
+				arg1 = arg1.toString(), arg2 = arg2.toString(); // 将传入的数据转化为字符串
+				var arg1Arr = arg1.split("."), // 将小数的数据从小数点的位置拆开
+						arg2Arr = arg2.split("."),
+						d1 = arg1Arr.length == 2 ? arg1Arr[1] : "", // 获取第一个数的小数点的长度
+						d2 = arg2Arr.length == 2 ? arg2Arr[1] : ""; // 获取第二个数的小数点的长度
+				var maxLen = Math.max(d1.length, d2.length); // 获取小数点长度较大的值
+				var m = Math.pow(10, maxLen); // 这里表示10的小数点长度次方 也就是说如果小数点长度为2 m的值就是100 如果小数点长度是3 m的值就是1000如果不懂请自行查找api
+				var result = Number(((arg1 * m + arg2 * m) / m).toFixed(maxLen)); // 将小数转化为整数后相加在除掉两个数乘过的倍数然后去小数点较长的长度的小数位数
+				var d = arguments[2]; // 第三个参数用户可以自行决定是否要传递 用来定义要保留的小数长度
+				return typeof d === "number" ? Number((result).toFixed(d)) : result;
+			}
+			function mul(arg1, arg2) {
+				var r1 = arg1.toString(), // 将传入的数据转化为字符串
+						r2 = arg2.toString(),
+						m, resultVal, d = arguments[2];
+				m = (r1.split(".")[1] ? r1.split(".")[1].length : 0) + (r2.split(".")[1] ? r2.split(".")[1].length : 0);
+				resultVal = Number(r1.replace(".", "")) * Number(r2.replace(".", "")) / Math.pow(10, m);
+				return typeof d !== "number" ? Number(resultVal) : Number(resultVal.toFixed(parseInt(d)));
+			}
+
+			function logout(){
+				localStorage.removeItem("jwt")
+				localStorage.removeItem("userinfo")
+				window.location.href = "login.html"
+			}
+		
+			var token = localStorage.getItem("jwt")
+			var userinfo = localStorage.getItem("userinfo")
+			console.log(userinfo)
+		    window.onload = function(){
+				if(localStorage.getItem("jwt") === null || localStorage.getItem("userinfo") === null){
+					layer.msg('您还未登陆');
+					 window.location.href = "login.html"
+				}
+				var user = JSON.parse(userinfo);
+				document.getElementById('userinfo').innerText = user.username
+				if(user.roleID === 1){
+					//学生
+					document.getElementById("manageStudent").style.display="none";
+					document.getElementById("manageTeacher").style.display="none";
+					document.getElementById("manageClazz").style.display="none";
+				}else if(user.roleID === 2){
+					//教师
+					// document.getElementById("manageStudent").style.display="none";
+					document.getElementById("manageTeacher").style.display="none";
+					// document.getElementById("manageClazz").style.display="none";
+				}else if(user.roleID === 0){
+					
+				}
+			}
+			layui.use(['table', 'jquery', 'upload', 'element', 'util'], function() {
+				var $ = layui.jquery;
+				var table = layui.table;
+				var upload = layui.upload;
+				var upload2 = layui.upload;
+				var element = layui.element;
+				var util = layui.util;
+				table.set({
+				  headers: { 
+				    'admin-token': localStorage.getItem("jwt")
+				  }
+				});
+
+				table.on('tool(clazzScoreTable)', function(obj) {
+					var data = obj.data;
+					console.log(data)
+					if (obj.event === 'scoreDetail') {
+						layer.open({
+							type: 1,
+							title: '成绩详情',
+							shadeClose: true,
+							area: ['70%', '90%'],
+							content: $('#sdf'),
+							success: function() {
+								document.getElementById('studentName').innerText = data.username
+								document.getElementById('studentScore').innerText = '总分: '+ add(mul(data.score0, 0.4), mul(data.score1, 0.6)) + '    学号: ' + data.sn
+								table.render({
+									elem: '#transfer' ,
+									height: 'full-230',
+									url: "/score/?type=0&sn=" + data.sn,
+									page: true,
+									cols: [
+										[{
+											field: 'id',
+											title: '序号',
+											align: 'center'
+										}, {
+											field: 'question',
+											align: 'center',
+											title: '考题'
+										}, {
+											field: 'score',
+											align: 'center',
+											title: '成绩'
+										},{
+											field: 'updateDate',
+											align: 'center',
+											title: '考核时间'
+										}]
+									]
+								});
+								table.render({
+									elem: '#transfer2' ,
+									height: 'full-230',
+									url: "/score/?type=1&sn=" + data.sn,
+									where: {
+									},
+									page: true,
+									cols: [
+										[{
+											field: 'id',
+											title: '序号',
+											align: 'center'
+										}, {
+											field: 'question',
+											align: 'center',
+											title: '考题'
+										}, {
+											field: 'score',
+											align: 'center',
+											title: '成绩'
+										},{
+											field: 'updateDate',
+											align: 'center',
+											title: '考核时间'
+										}]
+									]
+								});
+							}
+						})
+					}
+				});
+
+				table.render({
+					elem: '#clazzTable',
+					height: 'full-190',
+					url: '/clazz/',
+					toolbar: '#toolbarDemo',
+					defaultToolbar: ['filter', 'exports', 'print'],
+					title: '班级数据表',
+					cols: [
+						[{
+								type: 'checkbox',
+								fixed: 'left'
+							}, {
+								field: 'id',
+								title: '班级编号',
+								align: 'center',
+								sort: true
+							},
+							{
+								field: 'name',
+								title: '班级名称',
+								align: 'center',
+								sort: true
+							}, {
+								field: 'username',
+								title: '负责老师',
+								align: 'center',
+							}, {
+								field: 'function1',
+								title: '实验结构功能',
+								align: 'center',
+								event: 'setFunction1', 
+								style:'cursor: pointer;',
+								templet: function(d) {
+									if (d.function1 == 1)
+										return '<i class="layui-icon layui-icon-ok"></i>   '
+									else return ''
+								}
+							}, {
+								field: 'function2',
+								title: '实验教练功能',
+								align: 'center',
+								event: 'setFunction2', 
+								style:'cursor: pointer;',
+								templet: function(d) {
+									if (d.function2 == 1)
+										return '<i class="layui-icon layui-icon-ok"></i>   '
+									else return ''
+								}
+							}, {
+								field: 'function3',
+								title: '实验考验功能',
+								align: 'center',
+								event: 'setFunction3', 
+								style:'cursor: pointer;',
+								templet: function(d) {
+									if (d.function3 == 1)
+										return '<i class="layui-icon layui-icon-ok"></i>   '
+									else return ''
+								}
+							},
+							{
+								fixed: 'right',
+								title: '操作',
+								toolbar: '#barDemo',
+								align: 'center',
+								width: 200
+							}
+						]
+					],
+					page: true,
+					error: function(){
+						window.location.href = "login.html"
+					}
+				});
+				
+				//头工具栏事件
+				table.on('toolbar(clazzTable)', function(obj) {
+					var checkStatus = table.checkStatus(obj.config.id);
+					switch (obj.event) {
+						case 'delBatch':
+							var data = checkStatus.data;
+							var ids = new Array();
+							for (var i = 0; i < data.length; i++) {
+								ids[i] = data[i].id;
+							}
+							var param = {
+								"ids": ids
+							}
+							layer.confirm('确认删除选中班级', function(index) {
+								$.ajax({
+									url: "/clazz/delBatch",
+									type: "post",
+									dataType: "json",
+									data: param,
+									beforeSend: function(request) {
+										request.setRequestHeader("admin-token",localStorage.getItem("jwt"));
+									},
+									success: function(res) {
+										location.reload();
+									},
+									error: function(data) {
+										location.reload();
+									}
+								});
+							});
+							break;
+					};
+				});
+				table.on('toolbar(studentTable)', function(obj) {
+					var checkStatus = table.checkStatus(obj.config.id);
+					switch (obj.event) {
+						case 'delBatchStudent':
+							layer.confirm('确认批量删除', function(index) {
+								var data = checkStatus.data;
+								var ids = new Array();
+								for (var i = 0; i < data.length; i++) {
+									ids[i] = data[i].id;
+								}
+								var param = {
+									"ids": ids
+								}
+								$.ajax({
+									url: "/student/delBatch",
+									type: "post",
+									dataType: "json",
+									data: param,
+									beforeSend: function(request) {
+										request.setRequestHeader("admin-token",localStorage.getItem("jwt"));
+									},
+									success: function(res) {
+										location.reload();
+									},
+									error: function(data) {
+										location.reload();
+									}
+								});
+							});
+							break;
+					};
+				});
+				table.on('tool(studentTable)', function(obj) {
+					var data = obj.data;
+					console.log(data)
+					if (obj.event === 'del') {
+						layer.confirm('确认删除', function(index) {
+							var ids = new Array();
+							ids[0] = data.id;
+							var param = {
+								"ids": ids
+							}
+							$.ajax({
+								url: "/student/delBatch",
+								type: "post",
+								dataType: "json",
+								data: param,
+								beforeSend: function(request) {
+									request.setRequestHeader("admin-token",localStorage.getItem("jwt"));
+								},
+								success: function(res) {
+									location.reload();
+								},
+								error: function(data) {
+									location.reload();
+								}
+							});
+							layer.close(index);
+						});
+					}
+				});
+
+				//监听行工具事件
+				table.on('tool(clazzTable)', function(obj) {
+					var data = obj.data;
+					
+					if(obj.event === 'setFunction1' || obj.event === 'setFunction2' || obj.event === 'setFunction3'){
+						console.log(data)
+						var functionName = 'function' + obj.event.substring(11)
+						console.log("functionName " + functionName)
+						var value = 0;
+						console.log(value);
+						if(functionName === 'function1') {
+							data.function1 = (data.function1) === 1 ? 0 : 1;
+							value = data.function1;
+						}else if(functionName === 'function2') {
+							data.function2 = (data.function2) === 1 ? 0 : 1;
+							value = data.function2;
+						}else if(functionName === 'function3') {
+							data.function3 = (data.function3) === 1 ? 0 : 1;
+							value = data.function3;
+						}
+						console.log(data)
+						var param = {
+							'id': data.id,
+							'createDate': data.createDate,
+							'function1': data.function1,
+							'function2': data.function2,
+							'function3': data.function3,
+							'info': data.info,
+							'name': data.name							
+						};
+						console.log(param);
+						$.ajax({
+							url: "/clazz/",
+							type: "put",
+							dataType: "json",
+							data: JSON.stringify(param),
+							contentType: 'application/json',
+							success: function(res) {
+								if(functionName === 'function1') {
+									obj.update({
+										function1: value
+									});
+								}else if(functionName === 'function2') {
+									obj.update({
+										function2: value
+									});
+								}else if(functionName === 'function3') {
+									obj.update({
+										function3: value
+									});
+								}
+							},
+							error: function(data) {
+								layer.msg(data);
+							},
+							beforeSend: function(xhr) {
+								xhr.setRequestHeader("admin-token:"+localStorage.getItem("jwt"));
+							},
+							headers: {'Content-Type':'application/json;charset=utf8','admin-token':localStorage.getItem("jwt")}
+						});
+					}
+					
+					if (obj.event === 'manageStudent') {
+						layer.open({
+							type: 1,
+							title: '学生管理',
+							shadeClose: true,
+							area: ['70%', '90%'],
+							content: $('#studentList'),
+							success: function() {
+								table.render({
+									elem: '#studentTable' ,
+									height: 'full-230',
+									toolbar: '#studentToolBar',
+									url: "/student/?clazzId=" + data.id,
+									page: true,
+									cols: [
+										[{
+											type: 'checkbox',
+											fixed: 'left'
+										},
+										{
+											field: 'id',
+											title: '序号',
+											align: 'center'
+										}, {
+											field: 'username',
+											align: 'center',
+											title: '姓名'
+										}, {
+											field: 'sn',
+											align: 'center',
+											title: '学号'
+										},{
+											field: 'mobile',
+											align: 'center',
+											title: '手机号'
+										},{
+											fixed: 'right',
+											title: '操作',
+											toolbar: '#studentBar',
+											align: 'center',
+											width: 200
+										}]
+									]
+								});
+							}
+						});
+					} else if (obj.event === 'viewScore') {
+						element.tabAdd('demo', {
+							title: data.name + '成绩'
+							,content: '<table class="layui-hide" id="clazzScoreTable-' + data.id + '" lay-filter="clazzScoreTable"></table>'
+							,id: data.id
+						});
+						table.render({
+							elem: '#clazzScoreTable-' + data.id ,
+							url: '/clazz/score/?id=' + data.id,
+							height: 'full-190',
+							defaultToolbar: ['filter', 'exports', 'print'],
+							title: '班级-成绩数据表',
+							cols: [
+								[{
+									type: 'checkbox',
+									fixed: 'left'
+								}, {
+									field: 'name',
+									title: '班级名称',
+									align: 'center',
+									sort: true
+								}, {
+									field: 'username',
+									title: '姓名',
+									align: 'center',
+								}, {
+									field: 'score0',
+									title: '理论考核成绩',
+									align: 'center'
+								}, {
+									field: 'score1',
+									title: '实验考核成绩',
+									align: 'center'
+								}, {
+									title: '考核详情',
+									align: 'center',
+									event: 'scoreDetail',
+									style: 'cursor: pointer;',
+									templet: '<a href="javascript:;" class="layui-table-link">考核详情</a>'
+							
+								}, {
+									field: 'updateDate',
+									title: '考核时间',
+									align: 'center'
+								}]
+							],
+							page: true
+						});
+						element.tabChange('demo', data.id);
+					}
+
+				});
+
+				upload.render({
+					elem: '#importBatch',
+					url: '/clazz/importBatch',
+					exts: 'xls|xlsx',
+					headers: { 'admin-token': localStorage.getItem("jwt") },
+					accept: 'file',
+					done: function(res) {
+						if (res.code != 200) {
+							layer.alert(res.msg)
+						} else {
+							layer.msg(res.data);
+						}
+						location.reload();
+					}
+				});
+
+				upload2.render({
+					elem: '#importBatchStudent',
+					url: '/student/importBatch',
+					exts: 'xls|xlsx',
+					headers: { 'admin-token': localStorage.getItem("jwt") },
+					accept: 'file',
+					done: function(res) {
+						if (res.code != 200) {
+							layer.alert(res.msg)
+						} else {
+							layer.msg(res.data);
+						}
+						location.reload();
+					}
+				});
+			});
+		</script>
+		
+		<!-- 成绩详情弹框 -->
+		<div id="sdf" class="layui-container" style="width: 98%; display: none;" >
+			<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+
+			  <ul class="layui-tab-title layui-row">
+				<li class="layui-this layui-col-md2">理论考核</li>
+				<li class="layui-col-md2">实操考核</li>
+				<div class="layui-col-md2 layui-col-md-offset6">
+					<div class="layui-text pull-right" align="right" id="studentName"></div>
+					<div class="layui-text pull-right" align="right" id="studentScore"></div>
+				</div>
+			  </ul>
+
+			  <div class="layui-tab-content" style="height: 100px;">
+			    <div class="layui-tab-item layui-show">
+					<table id="transfer" lay-filter="transfer" class=""></table>
+				</div>
+				<div class="layui-tab-item layui-show">
+					<table id="transfer2" lay-filter="transfer2" class=""></table>
+				</div>
+			  </div>
+			</div> 
+			
+		</div>
+		
+		<!-- 学生管理弹框 -->
+		<div id="studentList" class="layui-container" style="width: 98%; display: none;">
+			<table id="studentTable" lay-filter="studentTable" class=""></table>
+		</div>
+		<!-- 学生bar -->
+		<script type="text/html" id="studentBar">
+			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+		</script>
+		<script type="text/html" id="studentToolBar">
+			<div class="layui-btn-container">
+				<button class="layui-btn layui-btn-danger" lay-event="delBatchStudent">批量删除</button>
+<!--				<button type="button" class="layui-btn" id="importBatchStudent"><i class="layui-icon"></i>批量导入</button>-->
+			</div>
+		</script>
+	</body>
+</html>

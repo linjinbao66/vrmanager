@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>成绩管理</title>
+		<link rel="stylesheet" href="layui/css/layui.css">
+	</head>
+	<body>
+		<div class="layui-layout layui-layout-admin" style="margin-bottom: 50px;">
+			<div class="layui-header">
+				<div class="layui-logo layui-hide-xs layui-bg-black"><img src="img/1.png" />虚拟实验管理平台</div>
+				<ul class="layui-nav layui-layout-right">
+					<li class="layui-nav-item layui-hide layui-show-md-inline-block">
+						<a href="javascript:;">
+							<img src="img/6.png" class="layui-nav-img"> 管理员
+						</a>
+						<dl class="layui-nav-child">
+							<dd><a href="profile.html">个人中心</a></dd>
+							<dd><a href="javascript:">登出</a></dd>
+						</dl>
+					</li>
+					<li class="layui-nav-item" lay-header-event="menuRight" lay-unselect>
+						<a href="javascript:;">
+							<i class="layui-icon layui-icon-more-vertical"></i>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="layui-bg-gray" style="padding: 30px;">
+			<div class="layui-row layui-col-space15">
+				<div class="layui-col-md12">
+					<div class="layui-card">
+						<div class="layui-card-header">成绩</div>
+						<div class="layui-card-body">
+							<table class="layui-hide" id="scoreTable" lay-filter="scoreTable"></table>
+							<script type="text/html" id="toolbarDemo">
+								<div class="layui-btn-container">
+									<button class="layui-btn layui-btn-danger" lay-event="delBatch">批量删除</button>
+									<button type="button" class="layui-btn" id="importBatch"><i class="layui-icon"></i>批量导入</button>
+								</div>
+							</script>
+							<script type="text/html" id="bar">
+								<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+							</script>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="layui/layui.js"></script>
+		<script>
+			layui.use(['table', 'jquery', 'upload'], function() {
+				var $ = layui.$;
+				var table = layui.table;
+				var upload = layui.upload;
+
+				table.render({
+					elem: '#scoreTable',
+					height: 'full-180',
+					url: '/score/',
+					toolbar: '#toolbarDemo',
+					defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+						title: '提示',
+						layEvent: 'LAYTABLE_TIPS',
+						icon: 'layui-icon-tips'
+					}],
+					title: '成绩数据表',
+					cols: [
+						[{
+							type: 'checkbox',
+							fixed: 'left'
+						}, {
+							field: 'question',
+							title: '考题',
+							align: 'center',
+							sort: true
+						}, {
+							field: 'score',
+							title: '成绩',
+							align: 'center',
+						}, {
+							field: 'operationTimes',
+							title: '操作次数',
+							align: 'center'
+						},{
+							field: 'updateDate',
+							title: '考核时间',
+							align: 'center'
+						},{
+							fixed: 'right',
+							title: '操作',
+							toolbar: '#bar',
+							align: 'center',
+							width: 200
+						}]
+					],
+					page: true
+				});
+
+				//头工具栏事件
+				table.on('toolbar(scoreTable)', function(obj) {
+					var checkStatus = table.checkStatus(obj.config.id);
+					switch (obj.event) {
+						case 'delBatch':
+							layer.confirm('确认批量删除', function(index) {
+								var data = checkStatus.data;
+								var ids = new Array();
+								for (var i = 0; i < data.length; i++) {
+									ids[i] = data[i].id;
+								}
+								var param = {
+									"ids": ids
+								}
+								$.ajax({
+									url: "/score/delBatch",
+									type: "post",
+									dataType: "json",
+									data: param,
+									success: function(res) {
+										location.reload();
+									},
+									error: function(data) {
+										location.reload();
+									}
+								});
+							});
+							break;
+						case 'LAYTABLE_TIPS':
+							layer.alert('这是工具栏右侧自定义的一个图标按钮');
+							break;
+					};
+				});
+
+				//监听行工具事件
+				table.on('tool(scoreTable)', function(obj) {
+					var data = obj.data;
+					console.log(data)
+					if (obj.event === 'del') {
+						layer.confirm('确认删除', function(index) {
+							var ids = new Array();
+							ids[0] = data.id;
+							var param = {
+								"ids": ids
+							}
+							$.ajax({
+								url: "/score/delBatch",
+								type: "post",
+								dataType: "json",
+								data: param,
+								success: function(res) {
+									location.reload();
+								},
+								error: function(data) {
+									location.reload();
+								}
+							});
+							layer.close(index);
+						});
+					}
+				});
+				
+				upload.render({
+					elem: '#importBatch'
+					,url: '/score/importBatch'
+					,accept: 'file' 
+					,done: function(res){
+						if(res.code != 200){
+							layer.alert(res.msg)
+						}else{
+							layer.msg(res.data);
+						}
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

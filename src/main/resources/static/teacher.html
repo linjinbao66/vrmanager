@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>教师管理</title>
+		<link rel="stylesheet" href="layui/css/layui.css">
+	</head>
+	<body>
+		<div class="layui-layout layui-layout-admin" style="margin-bottom: 50px;">
+			<div class="layui-header">
+		
+				<ul class="layui-nav layui-row">
+					<li class="layui-nav-item layui-logo layui-bg-black layui-col-md1">
+						<img src="img/1.png" />虚拟实验管理平台
+					</li>
+					<li class="layui-nav-item layui-col-md1" id = "manageClazz">
+						<a href="clazz.html" >班级管理</a>
+					</li>
+					<li class="layui-nav-item layui-this layui-col-md1" id= "manageTeacher">
+					    <a href="javascript:;">教师管理</a>
+					</li>
+					<li class="layui-nav-item layui-col-md1" id="manageStudent">
+					    <a href="student.html">学生管理</a>
+					</li>
+					<li class="layui-nav-item layui-hide layui-show-md-inline-block layui-col-md2 layui-col-md-offset5" style="text-align: center;">
+						<a href="javascript:;">
+							<img src="img/6.png" class="layui-nav-img"> <label id="userinfo">管理员</label>
+						</a>
+						<dl class="layui-nav-child">
+							<dd><a href="profile.html">个人中心</a></dd>
+							<dd><a href="javascript:;" onclick="logout()">登出</a></dd>
+						</dl>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="layui-bg-gray" style="padding: 30px;">
+			<div class="layui-row layui-col-space15">
+				<div class="layui-col-md12">
+					<div class="layui-card">
+						<div class="layui-card-header">教师</div>
+						<div class="layui-card-body">
+							<table class="layui-hide" id="teacherTable" lay-filter="teacherTable"></table>
+							<script type="text/html" id="toolbarDemo">
+								<div class="layui-btn-container">
+									<button class="layui-btn layui-btn-danger" lay-event="delBatch">批量删除</button>
+									<button type="button" class="layui-btn" id="importBatch"><i class="layui-icon"></i>批量导入</button>
+								</div>
+							</script>
+							<script type="text/html" id="bar">
+								<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+							</script>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="layui/layui.js"></script>
+		<script>
+			function logout(){
+				localStorage.removeItem("jwt")
+				localStorage.removeItem("userinfo")
+				window.location.href = "login.html"
+			}
+					
+			var token = localStorage.getItem("jwt")
+			var userinfo = localStorage.getItem("userinfo")
+			console.log(userinfo)
+			window.onload = function(){
+				if(localStorage.getItem("jwt") === null || localStorage.getItem("userinfo") === null){
+					layer.msg('您还未登陆');
+					 window.location.href = "login.html"
+				}
+				var user = JSON.parse(userinfo);
+				document.getElementById('userinfo').innerText = user.username
+				if(user.roleID === 1){
+					//学生
+					document.getElementById("manageStudent").style.display="none";
+					document.getElementById("manageTeacher").style.display="none";
+					document.getElementById("manageClazz").style.display="none";
+				}else if(user.roleID === 2){
+					//教师
+					// document.getElementById("manageStudent").style.display="none";
+					document.getElementById("manageTeacher").style.display="none";
+					// document.getElementById("manageClazz").style.display="none";
+				}else if(user.roleID === 0){
+					
+				}
+			}
+		
+			layui.use(['table', 'jquery', 'upload'], function() {
+				var $ = layui.$;
+				var table = layui.table;
+				var upload = layui.upload;
+				table.set({
+				  headers: { 
+				    'admin-token': localStorage.getItem("jwt")
+				  }
+				});
+				
+				table.render({
+					elem: '#teacherTable',
+					height: 'full-180',
+					url: '/teacher/',
+					toolbar: '#toolbarDemo',
+					defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+						title: '提示',
+						layEvent: 'LAYTABLE_TIPS',
+						icon: 'layui-icon-tips'
+					}],
+					title: '教师数据表',
+					cols: [
+						[{
+							type: 'checkbox',
+							fixed: 'left'
+						}, {
+							field: 'sn',
+							title: '工号',
+							align: 'center',
+							sort: true
+						}, {
+							field: 'username',
+							title: '姓名',
+							align: 'center',
+						}, {
+							field: 'mobile',
+							title: '手机号',
+							align: 'center'
+						},{
+							fixed: 'right',
+							title: '操作',
+							toolbar: '#bar',
+							align: 'center',
+							width: 200
+						}]
+					],
+					page: true
+				});
+
+				//头工具栏事件
+				table.on('toolbar(teacherTable)', function(obj) {
+					var checkStatus = table.checkStatus(obj.config.id);
+					switch (obj.event) {
+						case 'delBatch':
+							layer.confirm('确认批量删除', function(index) {
+								var data = checkStatus.data;
+								var ids = new Array();
+								for (var i = 0; i < data.length; i++) {
+									ids[i] = data[i].id;
+								}
+								var param = {
+									"ids": ids
+								}
+								$.ajax({
+									url: "/teacher/delBatch",
+									type: "post",
+									dataType: "json",
+									data: param,
+									beforeSend: function(request) {
+										request.setRequestHeader("admin-token",localStorage.getItem("jwt"));
+									},
+									success: function(res) {
+										location.reload();
+									},
+									error: function(data) {
+										location.reload();
+									}
+								});
+							});
+							break;
+						case 'LAYTABLE_TIPS':
+							layer.alert('这是工具栏右侧自定义的一个图标按钮');
+							break;
+					};
+				});
+
+				//监听行工具事件
+				table.on('tool(teacherTable)', function(obj) {
+					var data = obj.data;
+					console.log(data)
+					if (obj.event === 'del') {
+						layer.confirm('确认删除', function(index) {
+							var ids = new Array();
+							ids[0] = data.id;
+							var param = {
+								"ids": ids
+							}
+							$.ajax({
+								url: "/teacher/delBatch",
+								type: "post",
+								dataType: "json",
+								data: param,
+								beforeSend: function(request) {
+									request.setRequestHeader("admin-token",localStorage.getItem("jwt"));
+								},
+								success: function(res) {
+									location.reload();
+								},
+								error: function(data) {
+									location.reload();
+								}
+							});
+							layer.close(index);
+						});
+					}
+				});
+				
+				upload.render({
+					elem: '#importBatch'
+					,url: '/teacher/importBatch'
+					,exts: 'xls|xlsx'
+					,accept: 'file' 
+					,done: function(res){
+						if(res.code != 200){
+							layer.alert(res.msg)
+						}else{
+							layer.alert(res.msg)
+						}
+						location.reload();
+					},
+					headers: { 'admin-token': localStorage.getItem("jwt") },
+				});
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>个人中心</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <script src="js/jquery-1.10.2.min.js"></script>
+    <script src="js/util.js"></script>
+    <style type="text/css">
+        body {
+            padding: 20px;
+            background-color: #F2F2F2;
+        }
+    </style>
+</head>
+<body>
+    <div class="layui-layout layui-layout-admin" style="margin-bottom: 50px;">
+        <div class="layui-header">
+            <ul class="layui-nav layui-row">
+                <li class="layui-nav-item layui-logo layui-bg-black layui-col-md1">
+                    <img src="img/1.png" />虚拟实验管理平台
+                </li>
+                <li class="layui-nav-item layui-col-md1" id = "manageClazz">
+                    <a href="clazz.html" >班级管理</a>
+                </li>
+                <li class="layui-nav-item layui-col-md1" id= "manageTeacher">
+                    <a href="teacher.html">教师管理</a>
+                </li>
+                <li class="layui-nav-item layui-col-md1" id="manageStudent">
+                    <a href="student.html">学生管理</a>
+                </li>
+                <li class="layui-nav-item layui-hide layui-show-md-inline-block layui-col-md2 layui-col-md-offset5" style="text-align: center;">
+                    <a href="javascript:;">
+                        <img src="img/6.png" class="layui-nav-img"> <label id="userinfo"></label>
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:">个人中心</a></dd>
+                        <dd><a href="javascript:;" onclick="logout()">登出</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-container" style="margin-top: 100px">
+
+        <div class="layui-row">
+            <!-- 操作表单 -->
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header" style="font-size: 24px">用户信息</div>
+                    <div class="layui-card-body">
+                        <form id="userForm" class="layui-form layui-form-pane">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">用户名</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="username" name="username" readonly="readonly" autocomplete="off" placeholder="" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">密码</label>
+                                <div class="layui-input-inline">
+                                    <a class="layui-btn" onclick="updatePassword()">修改密码</a>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">班级</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="clazzName" readonly="readonly" name="clazzName"  autocomplete="off" placeholder="*" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">性别</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="sex" name="sex" readonly="readonly" autocomplete="off" placeholder="*" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">手机号</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="mobile" name="mobile" readonly="readonly" autocomplete="off" placeholder="*" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">qq号</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="qq" name="qq" autocomplete="off" readonly="readonly" placeholder="" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">角色</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="roleID" name="roleID" readonly="readonly" autocomplete="off" placeholder="" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">创建时间</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="createDate" id="createDate" autocomplete="off" placeholder="" class="layui-input" readonly="readonly" disabled="disabled">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">更新时间</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="updateDate" name="updateDate" autocomplete="off" placeholder="" class="layui-input" readonly="readonly" disabled="disabled">
+                                </div>
+                            </div>
+                            <!--<div class="layui-form-item">
+                                <div class="layui-input-inline">
+                                    <a class="layui-btn" onclick="userFormSave()">保存</a>
+                                </div>
+                            </div>-->
+                            <!-- 隐藏域 -->
+                            <input type="text" name="id" hidden="hidden"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="layui/layui.js"></script>
+    <script>
+
+        function logout(){
+            localStorage.removeItem("jwt")
+            localStorage.removeItem("userinfo")
+            window.location.href = "login.html"
+        }
+
+        window.onload = function(){
+            var token = localStorage.getItem("jwt")
+            var userinfo = localStorage.getItem("userinfo")
+
+            if(token === null || userinfo === null){
+                layer.msg('您还未登陆');
+                window.location.href = "login.html"
+            }
+            var user = JSON.parse(userinfo);
+            console.log(user)
+            document.getElementById('userinfo').innerText = user.username
+            var roleID = user.roleID;
+            if (roleID === 0){
+                $("#username").attr("value",user.username);
+                $("#roleID").attr("value", "超级管理员");
+                $("#mobile").attr("value", user.mobile);
+                $("#createDate").attr("value", user.createDate);
+                $("#updateDate").attr("value", user.updateDate);
+            }else if (roleID == 2){
+                document.getElementById("manageTeacher").style.display="none";
+                $("#username").attr("value",user.username);
+                $("#roleID").attr("value", "教师");
+                $("#mobile").attr("value", user.mobile);
+                $("#createDate").attr("value", user.createDate);
+                $("#updateDate").attr("value", user.updateDate);
+                $("#sex").attr("value", user.sex);
+                $("#qq").attr("value", user.qq);
+            }else if (roleID == 1){
+                document.getElementById("manageStudent").style.display="none";
+                document.getElementById("manageTeacher").style.display="none";
+                document.getElementById("manageClazz").style.display="none";
+                $("#username").attr("value",user.username);
+                $("#roleID").attr("value", "学生");
+                $("#mobile").attr("value", user.mobile);
+                $("#createDate").attr("value", user.createDate);
+                $("#updateDate").attr("value", user.updateDate);
+                $("#sex").attr("value", user.sex);
+                $("#qq").attr("value", user.qq);
+                $("#clazzName").attr("value", user.clazzName);
+            }
+        }
+
+        function userFormSave() {
+            $.post("/system/updateUser", $("#userForm").serializeObject(), function (data) {
+                layer.msg("修改成功！", {icon: 1, time: 2000}, function () {});
+                $("#userForm").form(data.data);
+            });
+        }
+
+        layui.use(['form', 'jquery', 'upload'], function() {
+                var form = layui.form;
+                var $ = layui.$;
+                var upload = layui.upload;
+        });
+
+        /**
+         * 修改密码
+         */
+        function updatePassword() {
+            let html = "<form id=\"updatePassword\" class=\"layui-form layui-form-pane\">\n" +
+                "\t<div class=\"layui-form-item\">\n" +
+                "\t\t<label class=\"layui-form-label\" style='width: 110px !important;'>原密码</label>\n" +
+                "\t\t<div class=\"layui-input-block\">\n" +
+                "\t\t\t<input type=\"text\" name=\"oldPassword\" autocomplete=\"off\"\n" +
+                "\t\t\t\t   placeholder=\"原密码\" class=\"layui-input\">\n" +
+                "\t\t</div>\n" +
+                "\t</div>\n" +
+                "\t<div class=\"layui-form-item\">\n" +
+                "\t\t<label class=\"layui-form-label\"  style='width: 110px !important;'>新密码</label>\n" +
+                "\t\t<div class=\"layui-input-block\">\n" +
+                "\t\t\t<input type=\"text\" name=\"newPassword\" autocomplete=\"off\"\n" +
+                "\t\t\t\t   placeholder=\"新密码\" class=\"layui-input\">\n" +
+                "\t\t</div>\n" +
+                "\t</div>\n" +
+                "\t<div class=\"layui-form-item\">\n" +
+                "\t\t<div class=\"layui-input-block\">\n" +
+                "\t\t\t<a class=\"layui-btn\" onclick=\"" +
+                "    $.post('/system/updatePassword', $('#updatePassword').serializeObject(), function (data) {\n" +
+                "        if (data.flag) {\n" +
+                "            layer.msg('修改密码成功，请重新登录系统！', {icon: 1, time: 2000}, function () {\n" +
+                "                window.parent.location.href = '/login.html';\n" +
+                "            });\n" +
+                "        }else{\n" +
+                "            layer.msg(data.msg, {icon: 2, time: 2000}, function () {});\n" +
+                "        }\n" +
+                "    });" +
+                "\">修改</a>\n" +
+                "\t\t</div>\n" +
+                "\t</div>\n" +
+                "</form>";
+            //iframe层-父子操作
+            layer.open({
+                title: '修改密码',
+                type: 1,
+                area: ['400px', '250px'],
+                fixed: false,
+                maxmin: true,
+                content: html
+            });
+        }
+    </script>
+
+
+</body>

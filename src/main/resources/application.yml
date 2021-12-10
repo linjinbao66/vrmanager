@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: vrmanager
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://tcp.linjinbao.tk:3306/vrmanager2?setUnicode=true&characterEncoding=utf8&useAffectedRows=true
+    username: amrom
+    password: 369369
+  http:
+    encoding:
+      force: true
+      charset: utf-8
+      enabled: true
+  devtools:
+    restart:
+      enabled: true
