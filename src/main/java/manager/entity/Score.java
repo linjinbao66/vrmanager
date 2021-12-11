@@ -22,9 +22,13 @@ public class Score implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    private LocalDateTime createDate;
+    private String question;
 
-    private String creator;
+    private Integer type;
+
+    private String studentSn;
+
+    private Long questionid;
 
     private Long operationTimes;
 
@@ -36,18 +40,13 @@ public class Score implements Serializable {
 
     private Integer studentId;
 
+    private LocalDateTime createDate;
+
+    private String creator;
+
     private LocalDateTime updateDate;
 
     private String updater;
-
-    private String question;
-
-    private Integer type;
-
-    private String studentSn;
-
-    private Long questionid;
-
 
     public Long getId() {
         return id;
