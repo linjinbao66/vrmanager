@@ -31,6 +31,8 @@ public class Score implements Serializable {
 
     private String studentSn;
 
+    private String studentName;
+
     private Long questionid;
 
     private Long operationTimes;
@@ -171,6 +173,14 @@ public class Score implements Serializable {
         this.questionid = questionid;
     }
 
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
+
     @Override
     public String toString() {
         return "Score{" +
@@ -188,6 +198,7 @@ public class Score implements Serializable {
         ", type=" + type +
         ", studentSn=" + studentSn +
         ", questionid=" + questionid +
+        ", studentName=" + studentName +
         "}";
     }
 }

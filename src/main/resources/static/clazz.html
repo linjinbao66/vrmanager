@@ -144,7 +144,7 @@
 							area: ['70%', '90%'],
 							content: $('#sdf'),
 							success: function() {
-								document.getElementById('studentName').innerText = data.username
+								document.getElementById('studentName').innerText = data.studentName
 								document.getElementById('studentScore').innerText = '总分: '+ add(mul(data.score0, 0.4), mul(data.score1, 0.6)) + '    学号: ' + data.sn
 								table.render({
 									elem: '#transfer' ,

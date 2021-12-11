@@ -170,8 +170,9 @@ public class ClazzController {
                 double score1 = value.stream().filter(clazzScoreVo -> clazzScoreVo.getType().equals(1)).mapToDouble(ClazzScoreVo::getScore).sum();
                 vo2.setScore0(score0);
                 vo2.setScore1(score1);
+                vo2.setStudentName(value.get(0).getUsername());
+                vo2List.add(vo2);
             }
-            vo2List.add(vo2);
         });
 
         ResultVo vo = new ResultVo();

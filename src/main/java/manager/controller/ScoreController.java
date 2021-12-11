@@ -73,10 +73,17 @@ public class ScoreController {
         Page<Score> p = new Page<Score>(pageNum, pageSize);
         Page<Score> scorePage = scoreService.page(p, queryWrapper);
 
+        User bysn = userService.getOne(new QueryWrapper<User>().eq("sn", sn));
+        List<Score> records = scorePage.getRecords();
+        if (bysn!=null){
+            records.forEach(score -> score.setStudentName(bysn.getUsername()));
+        }
+
+
         ResultVo vo = new ResultVo();
         vo.setCount(scorePage.getTotal());
         vo.setCode(0);
-        vo.setData(scorePage.getRecords());
+        vo.setData(records);
         vo.setMsg("查询成绩成功");
         return vo;
     }
