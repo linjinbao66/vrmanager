@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import manager.vo.ResultVo;
 
 import javax.validation.ValidationException;
+import java.sql.BatchUpdateException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.StringJoiner;
 
 /**
@@ -49,6 +51,11 @@ public class GlobalExceptionHandler {
         StringJoiner sj = new StringJoiner(";");
         ex.getBindingResult().getFieldErrors().forEach(x -> sj.add(x.getDefaultMessage()));
         return ResultVo.renderErr(CodeEnum.REQUEST_ERR).withRemark(sj.toString());
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public ResultVo handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex){
+        return ResultVo.renderErr().withRemark(ex.getCause().getMessage());
     }
 
     /**
@@ -106,6 +113,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public ResultVo handleException(Exception ex) {
         log.error(ex.getMessage(), ex);
-        return ResultVo.renderErr(CodeEnum.SERVER_ERR);
+        return ResultVo.renderErr(CodeEnum.SERVER_ERR).withRemark(ex.getCause().getMessage());
     }
 }

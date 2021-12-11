@@ -30,7 +30,7 @@ public class ClazzServiceImpl extends ServiceImpl<ClazzMapper, Clazz> implements
 
     @Override
     public IPage<ClazzScoreVo> getClazzScore(Long id, Page<ClazzScoreVo> page, QueryWrapper queryWrapper) {
-        queryWrapper = new QueryWrapper<ClazzScoreVo>().eq("clazz.id", id);
+        queryWrapper = new QueryWrapper<Clazz>().eq("id", id);
         return clazzMapper.getPageClazzScoreVo(page,queryWrapper);
     }
 }

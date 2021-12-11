@@ -144,13 +144,14 @@ public class ClazzController {
         return b ? ResultVo.renderOk().withRemark("导入成功") : ResultVo.renderErr().withRemark("导入失败");
     }
 
-    @ApiOperation(value = "获取班级成绩")
+    @ApiOperation(value = "获取班级下的所有学生成绩")
     @ApiImplicitParam(name = "id", value = "班级id")
     @GetMapping("/score")
     public ResultVo score(
-            @RequestParam(value = "id")Long clazzId,
+            @RequestParam(value = "clazzId")Long clazzId,
             @RequestParam(value = "page", required = false, defaultValue = "1")Long page,
-            @RequestParam(value = "limit", required = false, defaultValue = "50")Long limit){
+            @RequestParam(value = "limit", required = false, defaultValue = "50")Long limit
+    ){
 
         Page<ClazzScoreVo> p = new Page<>(page, limit);
         IPage<ClazzScoreVo> voList = clazzService.getClazzScore(clazzId, p, null);
