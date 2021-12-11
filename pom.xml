@@ -11,7 +11,7 @@
     <groupId>tk.amrom.vrmanager</groupId>
     <artifactId>vrmanager</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>vrmanager</name>
+    <name>manager</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
