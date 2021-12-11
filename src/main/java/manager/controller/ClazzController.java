@@ -73,6 +73,9 @@ public class ClazzController {
     @PostMapping("/")
     public ResultVo addOne(Clazz clazz){
         validateClazz(clazz);
+        if (null != clazzService.getOne(new QueryWrapper<Clazz>().eq("name",clazz.getName()))){
+            return ResultVo.renderErr().withRemark("班级名称重复");
+        }
         if (Strings.isNotEmpty(clazz.getTeacherSn())){
             User one = userService.getOne(new QueryWrapper<User>().eq("sn", clazz.getTeacherSn())
                     .eq("role_id", "2"));
@@ -183,19 +186,19 @@ public class ClazzController {
         if (Strings.isEmpty(clazz.getName())){
             throw new BizException(CodeEnum.ERR).withRemark("班级名称为空");
         }
-        if (null != clazz.getFunction1()){
+        if (null == clazz.getFunction1()){
             clazz.setFunction1(0);
         }
         if (clazz.getFunction1()!=0 && clazz.getFunction1()!=1){
             clazz.setFunction1(0);
         }
-        if (null != clazz.getFunction2()){
+        if (null == clazz.getFunction2()){
             clazz.setFunction2(0);
         }
         if (clazz.getFunction2()!=0 && clazz.getFunction2()!=1){
             clazz.setFunction2(0);
         }
-        if (null != clazz.getFunction3()){
+        if (null == clazz.getFunction3()){
             clazz.setFunction3(0);
         }
         if (clazz.getFunction3()!=0 && clazz.getFunction3()!=1){

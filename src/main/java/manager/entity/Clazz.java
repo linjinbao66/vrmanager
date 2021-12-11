@@ -1,6 +1,8 @@
 package manager.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -38,12 +40,19 @@ public class Clazz implements Serializable {
     private String teacherSn;
 
     @ApiModelProperty(hidden = true)
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;
+
     @ApiModelProperty(hidden = true)
+    @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updateDate;
+
     @ApiModelProperty(hidden = true)
+    @TableField(fill = FieldFill.UPDATE)
     private String creator;
+
     @ApiModelProperty(hidden = true)
+    @TableField(fill = FieldFill.UPDATE)
     private String updater;
 
     public Integer getId() {

@@ -1,11 +1,11 @@
 package manager.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * <p>
@@ -21,12 +21,8 @@ public class SystemMenu implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-      @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
-
-    private LocalDateTime createDate;
-
-    private String creator;
 
     private String href;
 
@@ -44,8 +40,20 @@ public class SystemMenu implements Serializable {
 
     private String title;
 
+    @ApiModelProperty(hidden = true)
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createDate;
+
+    @ApiModelProperty(hidden = true)
+    @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updateDate;
 
+    @ApiModelProperty(hidden = true)
+    @TableField(fill = FieldFill.UPDATE)
+    private String creator;
+
+    @ApiModelProperty(hidden = true)
+    @TableField(fill = FieldFill.UPDATE)
     private String updater;
 
 

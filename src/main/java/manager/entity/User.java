@@ -1,6 +1,8 @@
 package manager.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -34,12 +36,19 @@ public class User implements Serializable {
     private Integer roleId;     //0管理员 1学生 2教师
 
     @ApiModelProperty(hidden = true)
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createDate;
+
     @ApiModelProperty(hidden = true)
-    private String creator;
-    @ApiModelProperty(hidden = true)
+    @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updateDate;
+
     @ApiModelProperty(hidden = true)
+    @TableField(fill = FieldFill.UPDATE)
+    private String creator;
+
+    @ApiModelProperty(hidden = true)
+    @TableField(fill = FieldFill.UPDATE)
     private String updater;
 
     public Long getId() {
