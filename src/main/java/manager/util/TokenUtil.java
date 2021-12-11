@@ -49,6 +49,9 @@ public class TokenUtil {
      * @return
      */
     public static boolean verify(String token){
+        if (null == token){
+            return false;
+        }
         try {
             Algorithm algorithm = Algorithm.HMAC256(TOKEN_SECRET);
             JWTVerifier verifier = JWT.require(algorithm).build();

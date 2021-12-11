@@ -13,17 +13,23 @@ import javax.servlet.http.HttpServletResponse;
 public class TokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)throws Exception {
+
+        response.setHeader("Content-Type", "text/html;charset=UTF-8");
+        response.setCharacterEncoding("utf-8");
+
         if (request.getMethod().equals("OPTIONS")){
             response.setStatus(HttpServletResponse.SC_OK);
             return true;
         }
 
-        response.setCharacterEncoding("utf-8");
         String token = request.getHeader("admin-token");
-        if (token != null) return TokenUtil.verify(token);
-        response.setHeader("Content-Type", "text/html;charset=UTF-8");
+
+        boolean verify = TokenUtil.verify(token);
+        if (verify){
+            return true;
+        }
         log.info("拦截器拦截, {}",request.getRequestURL());
-        response.getWriter().write("权限不足");
-        return true;
+        response.sendRedirect("/login.html");
+        return false;
     }
 }
