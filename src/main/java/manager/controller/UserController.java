@@ -1,20 +1,24 @@
 package manager.controller;
 
 
+import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.lang.Validator;
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.ApiOperation;
 import manager.entity.User;
 import manager.service.IUserService;
+import manager.util.BizException;
+import manager.util.CodeEnum;
 import manager.vo.ResultVo;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/user")
@@ -29,7 +33,6 @@ public class UserController {
             @RequestParam(value = "limit",required = false, defaultValue = "5")Long limit,
             @RequestParam(value = "page",required = false, defaultValue = "1")Long page,
             @RequestParam(value = "username", required = false)String username
-
     ){
         Map<String, Object> columnMap = new HashMap<>();
         if (null != clazzId){
@@ -50,6 +53,87 @@ public class UserController {
         vo.setMsg("查询学生列表成功");
 
         return vo;
+    }
 
+    @PostMapping("/")
+    public ResultVo addOne(User user) {
+
+        user = validateUser(user);
+        User bysn = userService.getOne(new QueryWrapper<User>().eq("sn", user.getSn()));
+        if (null != bysn){
+            return ResultVo.renderErr().withRemark("学号或工号重复");
+        }
+        boolean save = userService.save(user);
+        return save ? ResultVo.renderOk().withRemark("添加成功") : ResultVo.renderErr().withRemark("添加失败");
+    }
+
+    @PutMapping("/")
+    public ResultVo updateOne(User user) {
+        user = validateUser(user);
+        User bysn = userService.getOne(new QueryWrapper<User>().eq("sn", user.getSn()));
+        if (null == bysn){
+            return ResultVo.renderErr().withRemark("学号或工号不存在");
+        }
+
+        boolean b = userService.updateById(user);
+        return b ? ResultVo.renderOk().withRemark("修改成功") : ResultVo.renderErr().withRemark("修改失败");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResultVo deleteOne(@PathVariable(value = "id")Long id){
+        User byId = userService.getById(id);
+        if (null == byId){
+            return ResultVo.renderErr().withRemark("删除失败，记录不存在");
+        }
+        boolean b = userService.removeById(id);
+        return b ? ResultVo.renderOk().withRemark("删除成功") : ResultVo.renderErr().withRemark("删除失败");
+    }
+
+    @PostMapping("/delBatch")
+    public ResultVo deleteBatch(@RequestParam(value = "ids[]") Long[] ids){
+        boolean b = userService.removeByIds(Arrays.asList(ids));
+        return b ? ResultVo.renderOk().withRemark("删除成功") : ResultVo.renderErr().withRemark("删除失败");
+    }
+
+    @ApiOperation(value = "从excel批量导入")
+    @PostMapping("/importBatch")
+    public ResultVo importBatch(
+            @RequestParam("file") MultipartFile importBatch) throws Exception {
+        ExcelReader reader = ExcelUtil.getReader(importBatch.getInputStream());
+        List<User> userList = reader.readAll(User.class);
+
+        if(CollectionUtil.isEmpty(userList)){
+            return ResultVo.renderErr().withRemark("导入数据为空");
+        }
+
+        for (int i=0; i<userList.size(); i++){
+            User tmpUser = userList.get(i);
+            validateUser(tmpUser);
+        }
+
+        boolean b = userService.saveBatch(userList);
+        return b ? ResultVo.renderOk().withRemark("导入成功") : ResultVo.renderErr().withRemark("导入失败");
+    }
+
+    public User validateUser(User user){
+        if (Strings.isEmpty(user.getSn())||Strings.isEmpty(user.getUsername())||null == user.getClazzId()){
+            throw new BizException(CodeEnum.ERR).withRemark("学号/用户名/班级编号必填");
+        }
+        if (!Validator.isGeneral(user.getSn())){
+            throw new BizException(CodeEnum.ERR).withRemark("学号格式错误");
+        }
+        if (null == user.getSex()||(user.getSex()!=0)&& user.getSex() !=1){
+            user.setSex(0);
+        }
+        if (!Validator.isMobile(user.getMobile())) {
+            throw new BizException(CodeEnum.ERR).withRemark("手机号格式验证不通过");
+        }
+        if (Strings.isEmpty(user.getPassword())){
+            user.setPassword("123456");
+        }
+        if (null == user.getRoleId()||(user.getRoleId()!=0)&& user.getRoleId() !=1){
+            user.setRoleId(1);
+        }
+        return user;
     }
 }

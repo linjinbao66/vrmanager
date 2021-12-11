@@ -3,7 +3,7 @@ package manager.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
-
+import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -23,7 +23,7 @@ public class User implements Serializable {
 
     private String qq;
 
-    private String sex;
+    private Integer sex;    //0是男 1是女
 
     private String sn;
 
@@ -31,14 +31,15 @@ public class User implements Serializable {
 
     private Long clazzId;
 
-    private Integer roleId;
+    private Integer roleId;     //0管理员 1学生 2教师
 
+    @ApiModelProperty(hidden = true)
     private LocalDateTime createDate;
-
+    @ApiModelProperty(hidden = true)
     private String creator;
-
+    @ApiModelProperty(hidden = true)
     private LocalDateTime updateDate;
-
+    @ApiModelProperty(hidden = true)
     private String updater;
 
     public Long getId() {
@@ -81,11 +82,11 @@ public class User implements Serializable {
         this.qq = qq;
     }
 
-    public String getSex() {
+    public Integer getSex() {
         return sex;
     }
 
-    public void setSex(String sex) {
+    public void setSex(Integer sex) {
         this.sex = sex;
     }
 
