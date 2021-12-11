@@ -91,7 +91,7 @@ public class ClazzController {
 
     @ApiOperation(value = "修改班级")
     @PutMapping("/")
-    public ResultVo updateOne(Clazz clazz){
+    public ResultVo updateOne(@RequestBody Clazz clazz){
         validateClazz(clazz);
         if (Strings.isNotEmpty(clazz.getTeacherSn())){
             User one = userService.getOne(new QueryWrapper<User>().eq("sn", clazz.getTeacherSn())

@@ -1,10 +1,10 @@
 package manager.config;
 
+import manager.util.TokenInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import manager.util.TokenInterceptor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,10 +21,10 @@ public class SpringmvcConfig implements WebMvcConfigurer {
                     "/layui/css/modules/*.css",
                     "/*.ico",
                     "/system/login",
+                    "/admin/login",
                     "/doc.html",
                     "/",
-                    "/system/sms"
-            );
+                    "/system/sms");
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -47,7 +47,6 @@ public class SpringmvcConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(new TokenInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns(EXCLUDE_PATH)
-                .excludePathPatterns(excludePathPatterns);
+                .excludePathPatterns(EXCLUDE_PATH).excludePathPatterns(excludePathPatterns);
     }
 }

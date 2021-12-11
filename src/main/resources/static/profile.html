@@ -91,7 +91,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">角色</label>
                                 <div class="layui-input-inline">
-                                    <input type="text" id="roleID" name="roleID" readonly="readonly" autocomplete="off" placeholder="" class="layui-input">
+                                    <input type="text" id="roleId" name="roleId" readonly="readonly" autocomplete="off" placeholder="" class="layui-input">
                                 </div>
                             </div>
                             <div class="layui-form-item">
@@ -140,28 +140,28 @@
             var user = JSON.parse(userinfo);
             console.log(user)
             document.getElementById('userinfo').innerText = user.username
-            var roleID = user.roleID;
-            if (roleID === 0){
+            var roleId = user.roleId;
+            if (roleId === 0){
                 $("#username").attr("value",user.username);
-                $("#roleID").attr("value", "超级管理员");
+                $("#roleId").attr("value", "超级管理员");
                 $("#mobile").attr("value", user.mobile);
                 $("#createDate").attr("value", user.createDate);
                 $("#updateDate").attr("value", user.updateDate);
-            }else if (roleID == 2){
+            }else if (roleId == 2){
                 document.getElementById("manageTeacher").style.display="none";
                 $("#username").attr("value",user.username);
-                $("#roleID").attr("value", "教师");
+                $("#roleId").attr("value", "教师");
                 $("#mobile").attr("value", user.mobile);
                 $("#createDate").attr("value", user.createDate);
                 $("#updateDate").attr("value", user.updateDate);
                 $("#sex").attr("value", user.sex);
                 $("#qq").attr("value", user.qq);
-            }else if (roleID == 1){
+            }else if (roleId == 1){
                 document.getElementById("manageStudent").style.display="none";
                 document.getElementById("manageTeacher").style.display="none";
                 document.getElementById("manageClazz").style.display="none";
                 $("#username").attr("value",user.username);
-                $("#roleID").attr("value", "学生");
+                $("#roleId").attr("value", "学生");
                 $("#mobile").attr("value", user.mobile);
                 $("#createDate").attr("value", user.createDate);
                 $("#updateDate").attr("value", user.updateDate);

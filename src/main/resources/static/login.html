@@ -111,13 +111,13 @@
 								localStorage.setItem("userinfo",JSON.stringify(res.data.userinfo))
 								var userinfo = JSON.stringify(res.data.userinfo)
 								var user = JSON.parse(userinfo);
-								if(user.roleID === 1){
+								if(user.roleId === 1){
 									//学生
-									window.location.href = "profile.html";
-								}else if(user.roleID === 2){
+									window.location.href = "/";
+								}else if(user.roleId === 2){
 									//教师
 									window.location.href = "student.html";
-								}else if(user.roleID === 0){
+								}else if(user.roleId === 0){
 									//管理员
 									window.location.href = "clazz.html";
 								}else{

@@ -80,6 +80,8 @@
 				return typeof d === "number" ? Number((result).toFixed(d)) : result;
 			}
 			function mul(arg1, arg2) {
+				if(arg1 == null) arg1 = 0;
+				if(arg2 == null) arg2 = 0;
 				var r1 = arg1.toString(), // 将传入的数据转化为字符串
 						r2 = arg2.toString(),
 						m, resultVal, d = arguments[2];
@@ -104,17 +106,17 @@
 				}
 				var user = JSON.parse(userinfo);
 				document.getElementById('userinfo').innerText = user.username
-				if(user.roleID === 1){
+				if(user.roleId === 1){
 					//学生
 					document.getElementById("manageStudent").style.display="none";
 					document.getElementById("manageTeacher").style.display="none";
 					document.getElementById("manageClazz").style.display="none";
-				}else if(user.roleID === 2){
+				}else if(user.roleId === 2){
 					//教师
 					// document.getElementById("manageStudent").style.display="none";
 					document.getElementById("manageTeacher").style.display="none";
 					// document.getElementById("manageClazz").style.display="none";
-				}else if(user.roleID === 0){
+				}else if(user.roleId === 0){
 					
 				}
 			}
@@ -147,21 +149,21 @@
 								table.render({
 									elem: '#transfer' ,
 									height: 'full-230',
-									url: "/score/?type=0&sn=" + data.sn,
+									url: "/score/?page=1&limit=10&type=0&sn=" + data.sn,
 									page: true,
 									cols: [
 										[{
-											field: 'id',
-											title: '序号',
-											align: 'center'
-										}, {
+											field: 'questionID',
+											align: 'center',
+											title: '题目序号'
+										},{
 											field: 'question',
 											align: 'center',
-											title: '考题'
+											title: '题目内容'
 										}, {
 											field: 'score',
 											align: 'center',
-											title: '成绩'
+											title: '考核分数'
 										},{
 											field: 'updateDate',
 											align: 'center',
@@ -172,23 +174,27 @@
 								table.render({
 									elem: '#transfer2' ,
 									height: 'full-230',
-									url: "/score/?type=1&sn=" + data.sn,
+									url: "/score/?page=1&limit=25&type=1&sn=" + data.sn,
 									where: {
 									},
 									page: true,
 									cols: [
 										[{
-											field: 'id',
-											title: '序号',
-											align: 'center'
-										}, {
+											field: 'questionID',
+											align: 'center',
+											title: '题目序号'
+										},{
 											field: 'question',
 											align: 'center',
-											title: '考题'
+											title: '题目内容'
 										}, {
 											field: 'score',
 											align: 'center',
-											title: '成绩'
+											title: '考核分数'
+										},{
+											field: 'operationTimes',
+											align: 'center',
+											title: '操作次数'
 										},{
 											field: 'updateDate',
 											align: 'center',
@@ -323,7 +329,7 @@
 									"ids": ids
 								}
 								$.ajax({
-									url: "/student/delBatch",
+									url: "/user/delBatch",
 									type: "post",
 									dataType: "json",
 									data: param,
@@ -352,7 +358,7 @@
 								"ids": ids
 							}
 							$.ajax({
-								url: "/student/delBatch",
+								url: "/user/delBatch",
 								type: "post",
 								dataType: "json",
 								data: param,
@@ -445,7 +451,7 @@
 									elem: '#studentTable' ,
 									height: 'full-230',
 									toolbar: '#studentToolBar',
-									url: "/student/?clazzId=" + data.id,
+									url: "/user/?clazzId=" + data.id,
 									page: true,
 									cols: [
 										[{
@@ -487,7 +493,7 @@
 						});
 						table.render({
 							elem: '#clazzScoreTable-' + data.id ,
-							url: '/clazz/score/?id=' + data.id,
+							url: '/clazz/score/?clazzId=' + data.id,
 							height: 'full-190',
 							defaultToolbar: ['filter', 'exports', 'print'],
 							title: '班级-成绩数据表',
@@ -502,15 +508,15 @@
 									sort: true
 								}, {
 									field: 'username',
-									title: '姓名',
+									title: '学生姓名',
 									align: 'center',
 								}, {
 									field: 'score0',
-									title: '理论考核成绩',
+									title: '理论考核总分',
 									align: 'center'
 								}, {
 									field: 'score1',
-									title: '实验考核成绩',
+									title: '实验考核总分',
 									align: 'center'
 								}, {
 									title: '考核详情',
@@ -550,7 +556,7 @@
 
 				upload2.render({
 					elem: '#importBatchStudent',
-					url: '/student/importBatch',
+					url: '/user/importBatch',
 					exts: 'xls|xlsx',
 					headers: { 'admin-token': localStorage.getItem("jwt") },
 					accept: 'file',

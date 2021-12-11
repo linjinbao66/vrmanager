@@ -54,7 +54,7 @@ public class UserController {
         vo.setCount(userPage.getTotal());
         vo.setCode(0);
         vo.setData(userPage.getRecords());
-        vo.setMsg("查询学生列表成功");
+        vo.setMsg("查询列表成功");
 
         return vo;
     }
@@ -135,7 +135,7 @@ public class UserController {
         if (Strings.isEmpty(user.getPassword())){
             user.setPassword("123456");
         }
-        if (null == user.getRoleId()||(user.getRoleId()!=0)&& user.getRoleId() !=1){
+        if (null == user.getRoleId() || (user.getRoleId()!=0 && user.getRoleId() !=1 &&user.getRoleId()!=2)){
             user.setRoleId(1);
         }
         return user;

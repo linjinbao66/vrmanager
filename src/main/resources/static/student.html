@@ -75,17 +75,17 @@
 				}
 				var user = JSON.parse(userinfo);
 				document.getElementById('userinfo').innerText = user.username
-				if(user.roleID === 1){
+				if(user.roleId === 1){
 					//学生
 					document.getElementById("manageStudent").style.display="none";
 					document.getElementById("manageTeacher").style.display="none";
 					document.getElementById("manageClazz").style.display="none";
-				}else if(user.roleID === 2){
+				}else if(user.roleId === 2){
 					//教师
 					// document.getElementById("manageStudent").style.display="none";
 					document.getElementById("manageTeacher").style.display="none";
 					// document.getElementById("manageClazz").style.display="none";
-				}else if(user.roleID === 0){
+				}else if(user.roleId === 0){
 					
 				}
 				
@@ -104,7 +104,7 @@
 				table.render({
 					elem: '#studentTable',
 					height: 'full-180',
-					url: '/student/',
+					url: '/user/?roleId=1',
 					toolbar: '#toolbarDemo',
 					defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
 						title: '提示',
@@ -196,7 +196,7 @@
 								"ids": ids
 							}
 							$.ajax({
-								url: "/student/delBatch",
+								url: "/user/delBatch",
 								type: "post",
 								dataType: "json",
 								beforeSend: function(request) {
@@ -217,7 +217,7 @@
 				
 				upload.render({
 					elem: '#importBatch'
-					,url: '/student/importBatch'
+					,url: '/user/importBatch'
 					,accept: 'file' 
 					,exts: 'xls|xlsx'
 					,headers: { 'admin-token': localStorage.getItem("jwt") }
