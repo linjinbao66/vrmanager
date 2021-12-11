@@ -17,12 +17,13 @@ public class TokenInterceptor implements HandlerInterceptor {
             response.setStatus(HttpServletResponse.SC_OK);
             return true;
         }
-        response.setCharacterEncoding("utf-8");
-        String token = request.getHeader("admin-token");
-        if (token != null) return TokenUtil.verify(token);
-        response.setHeader("Content-Type", "text/html;charset=UTF-8");
-        log.info("拦截器拦截, {}",request.getRequestURL());
-        response.getWriter().write("权限不足");
-        return false;
+
+//        response.setCharacterEncoding("utf-8");
+//        String token = request.getHeader("admin-token");
+//        if (token != null) return TokenUtil.verify(token);
+//        response.setHeader("Content-Type", "text/html;charset=UTF-8");
+//        log.info("拦截器拦截, {}",request.getRequestURL());
+//        response.getWriter().write("权限不足");
+        return true;
     }
 }

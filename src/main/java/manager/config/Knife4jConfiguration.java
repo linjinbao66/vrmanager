@@ -19,7 +19,7 @@ import java.util.List;
 @EnableSwagger2WebMvc
 public class Knife4jConfiguration {
 
-    private static final String AUTH_HEADER_NAME = "token";
+    private static final String AUTH_HEADER_NAME = "admin-token";
 
     @Bean(value = "defaultApi2")
     public Docket defaultApi2() {
@@ -31,7 +31,7 @@ public class Knife4jConfiguration {
                         .build())
                 .groupName("1.0版本")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("tk.amrom.vrmanager.controller"))
+                .apis(RequestHandlerSelectors.basePackage("manager.controller"))
                 .paths(PathSelectors.any())
                 .build()
                 .securitySchemes(securitySchemes());
