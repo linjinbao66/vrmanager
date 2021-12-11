@@ -16,7 +16,7 @@ public class ClazzScoreVo2 implements Serializable {
     private Integer type;        //0是理论考核，1是实验考核
 
     private String sn;
-    private String username;
+    private String studentName;
 
     private Date createDate;    //创建日期
     private Date updateDate;    //修改者

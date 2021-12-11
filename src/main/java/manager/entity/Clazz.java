@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * <p>
@@ -22,28 +23,28 @@ public class Clazz implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    private LocalDateTime createDate;
+    private Integer function1;
 
-    private String creator;
+    private Integer function2;
 
-    private String function1;
-
-    private String function2;
-
-    private String function3;
+    private Integer function3;
 
     private String info;
 
     private String name;
 
-    private String teacherId;
-
-    private LocalDateTime updateDate;
-
-    private String updater;
+    private Long teacherId;
 
     private String teacherSn;
 
+    @ApiModelProperty(hidden = true)
+    private LocalDateTime createDate;
+    @ApiModelProperty(hidden = true)
+    private LocalDateTime updateDate;
+    @ApiModelProperty(hidden = true)
+    private String creator;
+    @ApiModelProperty(hidden = true)
+    private String updater;
 
     public Integer getId() {
         return id;
@@ -69,30 +70,6 @@ public class Clazz implements Serializable {
         this.creator = creator;
     }
 
-    public String getFunction1() {
-        return function1;
-    }
-
-    public void setFunction1(String function1) {
-        this.function1 = function1;
-    }
-
-    public String getFunction2() {
-        return function2;
-    }
-
-    public void setFunction2(String function2) {
-        this.function2 = function2;
-    }
-
-    public String getFunction3() {
-        return function3;
-    }
-
-    public void setFunction3(String function3) {
-        this.function3 = function3;
-    }
-
     public String getInfo() {
         return info;
     }
@@ -109,11 +86,35 @@ public class Clazz implements Serializable {
         this.name = name;
     }
 
-    public String getTeacherId() {
+    public Integer getFunction1() {
+        return function1;
+    }
+
+    public void setFunction1(Integer function1) {
+        this.function1 = function1;
+    }
+
+    public Integer getFunction2() {
+        return function2;
+    }
+
+    public void setFunction2(Integer function2) {
+        this.function2 = function2;
+    }
+
+    public Integer getFunction3() {
+        return function3;
+    }
+
+    public void setFunction3(Integer function3) {
+        this.function3 = function3;
+    }
+
+    public Long getTeacherId() {
         return teacherId;
     }
 
-    public void setTeacherId(String teacherId) {
+    public void setTeacherId(Long teacherId) {
         this.teacherId = teacherId;
     }
 

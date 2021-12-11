@@ -32,11 +32,15 @@ public class UserController {
             @RequestParam(value = "clazzId", required = false)Long clazzId,
             @RequestParam(value = "limit",required = false, defaultValue = "5")Long limit,
             @RequestParam(value = "page",required = false, defaultValue = "1")Long page,
-            @RequestParam(value = "username", required = false)String username
+            @RequestParam(value = "username", required = false)String username,
+            @RequestParam(value = "roleId", required = false)Long roleId
     ){
         Map<String, Object> columnMap = new HashMap<>();
         if (null != clazzId){
             columnMap.put("clazz_id", clazzId);
+        }
+        if (null != roleId){
+            columnMap.put("role_id", roleId);
         }
         if (Strings.isNotEmpty(username)){
             columnMap.put("username", username);

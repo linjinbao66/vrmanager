@@ -13,7 +13,7 @@ import java.util.Date;
 public class ClazzScoreVo implements Serializable {
 
     private String name;		//班级名称
-    private double score;       //理论考核
+    private double score;       //分数
     private Integer type;       //0是理论考核，1是实验考核
 
     private String sn;
