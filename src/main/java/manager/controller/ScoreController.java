@@ -60,7 +60,7 @@ public class ScoreController {
     ){
         Map<String,Object> columnMap = new HashMap();
         if (Strings.isNotEmpty(sn)){
-            columnMap.put("studentSn", sn);
+            columnMap.put("student_sn", sn);
         }
         if (null != type) {
             columnMap.put("type", type);
