@@ -5,7 +5,7 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/vrmanager?setUnicode=true&characterEncoding=utf8&useAffectedRows=true
+    url: jdbc:mysql://121.5.240.206:3306/vrmanager?setUnicode=true&characterEncoding=utf8&useAffectedRows=true
     username: amrom
     password: 369369
   http:
