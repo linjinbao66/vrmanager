@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import manager.entity.Clazz;
 import manager.entity.Score;
 import manager.entity.User;
 import manager.service.IScoreService;
@@ -21,8 +20,12 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+import javax.websocket.server.PathParam;
 
 /**
  * <p>
@@ -58,7 +61,7 @@ public class ScoreController {
             @RequestParam(value = "page",required = false, defaultValue = "1")Integer pageNum,
             @RequestParam(value = "limit",required = false, defaultValue = "5")Integer pageSize
     ){
-        Map<String,Object> columnMap = new HashMap();
+        Map<String,Object> columnMap = new HashMap<String,Object>();
         if (Strings.isNotEmpty(sn)){
             columnMap.put("student_sn", sn);
         }
@@ -79,11 +82,39 @@ public class ScoreController {
             records.forEach(score -> score.setStudentName(bysn.getUsername()));
         }
 
-
         ResultVo vo = new ResultVo();
         vo.setCount(scorePage.getTotal());
         vo.setCode(0);
         vo.setData(records);
+        vo.setMsg("查询成绩成功");
+        return vo;
+    }
+
+    @GetMapping("/studentScore")
+    public ResultVo studentScore(@RequestParam(value = "sn")String sn, @RequestParam(value = "type")Long type){
+
+        User stu = userService.getOne(new QueryWrapper<User>().eq("role_id", 1).eq("sn", sn)); 
+        if(null == stu) return ResultVo.renderErr().withRemark("学生不存在");
+        
+        List<Score> scores =  scoreService.list(new QueryWrapper<Score>()
+                                .eq("student_sn", sn)
+                                .eq("type", type)
+                                .isNotNull("questionid"));
+        if(CollectionUtil.isEmpty(scores)) return ResultVo.renderErr().withRemark("无法查询到该学生成绩");
+        Long maxQuestionId = scores.stream().mapToLong(Score::getQuestionid).max().getAsLong();
+        
+        List<Score> s =  scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionId))
+            .collect(Collectors.toList());
+        
+        for(int i=0; i< s.size(); i++){
+            s.get(i).setId((long) i+1);
+            s.get(i).setStudentName(stu.getUsername());
+        }
+
+        ResultVo vo = new ResultVo();
+        vo.setCount((long) s.size());
+        vo.setCode(0);
+        vo.setData(s);
         vo.setMsg("查询成绩成功");
         return vo;
     }
@@ -129,11 +160,11 @@ public class ScoreController {
         if (null == bySn){
             return ResultVo.renderErr().withRemark("学生不存在");
         }
-
-        if (null == bySn) {
-            return ResultVo.renderErr().withRemark("学生不存在");
-        }
-        boolean b = scoreService.updateById(score);
+        boolean b = scoreService.saveOrUpdate(score, new QueryWrapper<Score>()
+                    .eq("questionid", score.getQuestionid())
+                    .eq("student_sn", score.getStudentSn())
+                    .eq("type", score.getType()));
+        // boolean b = scoreService.updateById(score);
         return b?ResultVo.renderOk().withRemark("更新成绩成功"):ResultVo.renderErr().withRemark("更新成绩失败");
     }
 

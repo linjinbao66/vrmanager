@@ -4,7 +4,9 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 
 @ToString
 @Data
@@ -18,8 +20,8 @@ public class ClazzScoreVo2 implements Serializable {
     private String sn;
     private String studentName;
 
-    private Date createDate;    //创建日期
-    private Date updateDate;    //修改者
+    private LocalDateTime createDate;    //创建日期
+    private LocalDateTime updateDate;    //修改者
 
     public boolean equals(Object obj) {
         if (obj == null) {

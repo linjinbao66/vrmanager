@@ -46,11 +46,7 @@ public class SystemController {
         if (Strings.isBlank(username) || Strings.isBlank(password)){
             return ResultVo.renderErr(CodeEnum.ERR).withRemark("用户名和密码错误");
         }
-        Map params = new HashMap();
-        params.put("username", username);
-        params.put("password", password);
-
-        User user = userService.getOne(new QueryWrapper<User>().eq("username", username).eq("password", password));
+        User user = userService.getOne(new QueryWrapper<User>().eq("sn", username).eq("password", password));
         if (null == user){
             return ResultVo.renderErr().withRemark("用户名或者密码错误");
         }

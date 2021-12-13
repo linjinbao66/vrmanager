@@ -12,7 +12,6 @@ import manager.mapper.ClazzMapper;
 import manager.service.IClazzService;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * <p>
@@ -31,6 +30,6 @@ public class ClazzServiceImpl extends ServiceImpl<ClazzMapper, Clazz> implements
     @Override
     public IPage<ClazzScoreVo> getClazzScore(Long id, Page<ClazzScoreVo> page, QueryWrapper queryWrapper) {
         queryWrapper = new QueryWrapper<Clazz>().eq("id", id);
-        return clazzMapper.getPageClazzScoreVo(page,queryWrapper);
+        return clazzMapper.getPageClazzScoreVo(page, queryWrapper);
     }
 }

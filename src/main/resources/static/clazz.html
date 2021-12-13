@@ -149,11 +149,11 @@
 								table.render({
 									elem: '#transfer' ,
 									height: 'full-230',
-									url: "/score/?page=1&limit=10&type=0&sn=" + data.sn,
+									url: "/score/studentScore?page=1&limit=10&type=0&sn=" + data.sn,
 									page: true,
 									cols: [
 										[{
-											field: 'questionID',
+											field: 'id',
 											align: 'center',
 											title: '题目序号'
 										},{
@@ -165,7 +165,7 @@
 											align: 'center',
 											title: '考核分数'
 										},{
-											field: 'updateDate',
+											field: 'createDate',
 											align: 'center',
 											title: '考核时间'
 										}]
@@ -174,13 +174,13 @@
 								table.render({
 									elem: '#transfer2' ,
 									height: 'full-230',
-									url: "/score/?page=1&limit=25&type=1&sn=" + data.sn,
+									url: "/score/studentScore?page=1&limit=25&type=1&sn=" + data.sn,
 									where: {
 									},
 									page: true,
 									cols: [
 										[{
-											field: 'questionID',
+											field: 'id',
 											align: 'center',
 											title: '题目序号'
 										},{
@@ -196,7 +196,7 @@
 											align: 'center',
 											title: '操作次数'
 										},{
-											field: 'updateDate',
+											field: 'createDate',
 											align: 'center',
 											title: '考核时间'
 										}]
@@ -526,7 +526,7 @@
 									templet: '<a href="javascript:;" class="layui-table-link">考核详情</a>'
 							
 								}, {
-									field: 'updateDate',
+									field: 'createDate',
 									title: '考核时间',
 									align: 'center'
 								}]
