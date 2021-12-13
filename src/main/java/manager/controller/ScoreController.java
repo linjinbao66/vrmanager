@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import manager.entity.Clazz;
 import manager.entity.Score;
 import manager.entity.User;
 import manager.service.IScoreService;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -129,11 +127,11 @@ public class ScoreController {
         if (null == bySn){
             return ResultVo.renderErr().withRemark("学生不存在");
         }
-
-        if (null == bySn) {
-            return ResultVo.renderErr().withRemark("学生不存在");
-        }
-        boolean b = scoreService.updateById(score);
+        boolean b = scoreService.saveOrUpdate(score, new QueryWrapper<Score>()
+                    .eq("questionid", score.getQuestionid())
+                    .eq("student_sn", score.getStudentSn())
+                    .eq("type", score.getType()));
+        // boolean b = scoreService.updateById(score);
         return b?ResultVo.renderOk().withRemark("更新成绩成功"):ResultVo.renderErr().withRemark("更新成绩失败");
     }
 
