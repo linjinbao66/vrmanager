@@ -107,7 +107,7 @@ public class ScoreController {
             .collect(Collectors.toList());
         
         for(int i=0; i< s.size(); i++){
-            s.get(i).setId((long) i);
+            s.get(i).setId((long) i+1);
             s.get(i).setStudentName(stu.getUsername());
         }
 
