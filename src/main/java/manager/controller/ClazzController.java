@@ -169,7 +169,7 @@ public class ClazzController {
             List<Score> scores = scoreService.list(new QueryWrapper<Score>().eq("student_sn", student.getSn()).isNotNull("questionid"));
             if(CollectionUtil.isEmpty(scores)) continue;
 
-            long maxQuestionIdScore0 = scores.stream().filter(score -> score.getType()==0).mapToLong(Score::getQuestionid).max().getAsLong();
+            long maxQuestionIdScore0 = scores.stream().filter(score -> score.getType()==0).mapToLong(Score::getQuestionid).max().orElse(0l);
             List<Score> scores0 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore0))
             .collect(Collectors.toList());
 
@@ -178,8 +178,9 @@ public class ClazzController {
             vo2.setName(null == clazz ? null : clazz.getName());
             // vo2.setCreateDate();
             double score0 = scores0.stream().filter(score->score.getType().equals(0)).mapToDouble(Score::getScore).sum();
-
-            long maxQuestionIdScore1 = scores.stream().filter(score -> score.getType()==1).mapToLong(Score::getQuestionid).max().getAsLong();
+            
+            long maxQuestionIdScore1 = scores.stream().filter(score -> score.getType()==1).mapToLong(Score::getQuestionid).max().orElse(0l);
+            if(0 == maxQuestionIdScore1) continue;
             List<Score> scores1 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore1))
             .collect(Collectors.toList());
 
