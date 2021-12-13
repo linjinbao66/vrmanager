@@ -166,13 +166,24 @@ public class ClazzController {
         List<User> studeList =  userService.list(new QueryWrapper<User>().eq("clazz_id", clazzId).eq("role_id", 1));
         Clazz clazz = clazzService.getOne(new QueryWrapper<Clazz>().eq("id", clazzId));
         for(User student : studeList){
-            List<Score> scores = scoreService.list(new QueryWrapper<Score>().eq("student_sn", student.getSn()));
+            List<Score> scores = scoreService.list(new QueryWrapper<Score>().eq("student_sn", student.getSn()).isNotNull("questionid"));
+            if(CollectionUtil.isEmpty(scores)) continue;
+
+            long maxQuestionIdScore0 = scores.stream().filter(score -> score.getType()==0).mapToLong(Score::getQuestionid).max().getAsLong();
+            List<Score> scores0 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore0))
+            .collect(Collectors.toList());
+
             ClazzScoreVo2 vo2 = new ClazzScoreVo2();
             vo2.setSn(student.getSn());
             vo2.setName(null == clazz ? null : clazz.getName());
-            vo2.setCreateDate(student.getCreateDate());
-            double score0 = scores.stream().filter(score->score.getType().equals(0)).mapToDouble(Score::getScore).sum();
-            double score1 = scores.stream().filter(score->score.getType().equals(1)).mapToDouble(Score::getScore).sum();
+            // vo2.setCreateDate();
+            double score0 = scores0.stream().filter(score->score.getType().equals(0)).mapToDouble(Score::getScore).sum();
+
+            long maxQuestionIdScore1 = scores.stream().filter(score -> score.getType()==1).mapToLong(Score::getQuestionid).max().getAsLong();
+            List<Score> scores1 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore1))
+            .collect(Collectors.toList());
+
+            double score1 = scores1.stream().filter(score->score.getType().equals(1)).mapToDouble(Score::getScore).sum();
             vo2.setScore0(score0);
             vo2.setScore1(score1);
             vo2.setStudentName(student.getUsername());

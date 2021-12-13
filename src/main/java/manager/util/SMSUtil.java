@@ -43,14 +43,4 @@ public class SMSUtil {
         }
         return response;
     }
-
-    public static void main(String[] args_) throws Exception {
-        CommonResponse commonResponse = SendSMS("12132", "15195355289");
-        String data = commonResponse.getData();
-        JSONObject jsonObject = JSONUtil.parseObj(data);
-        String code = jsonObject.getStr("Code");
-        System.out.println(code);
-
-
-    }
 }
