@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import manager.vo.ResultVo;
 
 import javax.validation.ValidationException;
-import java.sql.BatchUpdateException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.StringJoiner;
 
@@ -32,8 +31,8 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(BizException.class)
-    public ResultVo handleBizException(BizException ex) {
-        ResultVo result = ResultVo.renderErr(ex.getCode());
+    public ResultVo<CodeEnum> handleBizException(BizException ex) {
+        ResultVo<CodeEnum> result = ResultVo.renderErr(ex.getCode());
         if (!StringUtils.isEmpty(ex.getRemark())) {
             result.withRemark(ex.getRemark());
         }
@@ -47,14 +46,14 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(BindException.class)
-    public ResultVo handleBindException(BindException ex) {
+    public ResultVo<CodeEnum> handleBindException(BindException ex) {
         StringJoiner sj = new StringJoiner(";");
         ex.getBindingResult().getFieldErrors().forEach(x -> sj.add(x.getDefaultMessage()));
         return ResultVo.renderErr(CodeEnum.REQUEST_ERR).withRemark(sj.toString());
     }
 
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ResultVo handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex){
+    public ResultVo<CodeEnum> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex){
         return ResultVo.renderErr().withRemark(ex.getCause().getMessage());
     }
 
@@ -65,7 +64,7 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(ValidationException.class)
-    public ResultVo handleValidationException(ValidationException ex) {
+    public ResultVo<CodeEnum> handleValidationException(ValidationException ex) {
         return ResultVo.renderErr(CodeEnum.REQUEST_ERR).withRemark(ex.getCause().getMessage());
     }
 
@@ -76,7 +75,7 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResultVo handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ResultVo<CodeEnum> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         StringJoiner sj = new StringJoiner(";");
         ex.getBindingResult().getFieldErrors().forEach(x -> sj.add(x.getDefaultMessage()));
         return ResultVo.renderErr(CodeEnum.REQUEST_ERR).withRemark(sj.toString());
@@ -89,7 +88,7 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResultVo handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+    public ResultVo<CodeEnum> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
         return ResultVo.renderErr(CodeEnum.REQUEST_ERR).withRemark(ex.getMessage());
     }
 
@@ -100,7 +99,7 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
-    public ResultVo handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+    public ResultVo<CodeEnum> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
         return ResultVo.renderErr(CodeEnum.METHOD_NOT_ALLOWED);
     }
 
@@ -111,7 +110,7 @@ public class GlobalExceptionHandler {
      * @return
      */
     @ExceptionHandler(value = Exception.class)
-    public ResultVo handleException(Exception ex) {
+    public ResultVo<CodeEnum> handleException(Exception ex) {
         log.error(ex.getMessage(), ex);
         return ResultVo.renderErr(CodeEnum.SERVER_ERR).withRemark(ex.getCause().getMessage());
     }

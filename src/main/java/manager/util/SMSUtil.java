@@ -1,7 +1,5 @@
 package manager.util;
 
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
 import com.aliyuncs.DefaultAcsClient;
@@ -37,7 +35,6 @@ public class SMSUtil {
         request.putQueryParameter("TemplateParam", "{\"code\":\"" + code + "\"}");//短信模板变量对应的实际值
         try {
             response = client.getCommonResponse(request);
-            System.out.println(response.getData());
         } catch (ClientException e) {
             e.printStackTrace();
         }
