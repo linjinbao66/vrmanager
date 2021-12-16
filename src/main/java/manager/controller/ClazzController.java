@@ -166,15 +166,17 @@ public class ClazzController {
             long maxQuestionIdScore0 = scores.stream().filter(score -> score.getType()==0).mapToLong(Score::getQuestionid).max().orElse(0l);
             List<Score> scores0 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore0))
             .collect(Collectors.toList());
-
+            if(0 == maxQuestionIdScore0) continue;
             ClazzScoreVo2 vo2 = new ClazzScoreVo2();
             vo2.setSn(student.getSn());
             vo2.setName(null == clazz ? null : clazz.getName());
-            // vo2.setCreateDate();
+            if(CollUtil.isNotEmpty(scores0)){
+                vo2.setCreateDate(scores0.get(0).getCreateDate());
+            }
             double score0 = scores0.stream().filter(score->score.getType().equals(0)).mapToDouble(Score::getScore).sum();
             
             long maxQuestionIdScore1 = scores.stream().filter(score -> score.getType()==1).mapToLong(Score::getQuestionid).max().orElse(0l);
-            if(0 == maxQuestionIdScore1) continue;
+            
             List<Score> scores1 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore1))
             .collect(Collectors.toList());
             double score1 = scores1.stream().filter(score->score.getType().equals(1)).mapToDouble(Score::getScore).sum();
