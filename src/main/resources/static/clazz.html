@@ -167,7 +167,8 @@
 										},{
 											field: 'createDate',
 											align: 'center',
-											title: '考核时间'
+											title: '考核时间',
+											templet : "<div>{{layui.util.toDateString(d.createDate, 'yyyy-MM-dd HH:mm:ss')}}</div>"
 										}]
 									]
 								});
@@ -198,7 +199,8 @@
 										},{
 											field: 'createDate',
 											align: 'center',
-											title: '考核时间'
+											title: '考核时间',
+											templet : "<div>{{layui.util.toDateString(d.createDate, 'yyyy-MM-dd HH:mm:ss')}}</div>"
 										}]
 									]
 								});
@@ -528,7 +530,8 @@
 								}, {
 									field: 'createDate',
 									title: '考核时间',
-									align: 'center'
+									align: 'center',
+									templet : "<div>{{layui.util.toDateString(d.createDate, 'yyyy-MM-dd HH:mm:ss')}}</div>"
 								}]
 							],
 							page: true

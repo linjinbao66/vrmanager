@@ -2,6 +2,7 @@ package manager.vo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import manager.util.CodeEnum;
@@ -26,9 +27,9 @@ public class ResultVo<T> implements Serializable {
     }
 
     public ResultVo(T data) {
-        CodeEnum code = CodeEnum.OK;
-        this.setCode(code.getCode());
-        this.setMsg(code.getMessage());
+        CodeEnum c = CodeEnum.OK;
+        this.setCode(c.getCode());
+        this.setMsg(c.getMessage());
         this.setData(data);
         this.setCount(count);
     }
@@ -44,17 +45,17 @@ public class ResultVo<T> implements Serializable {
      * @param remark
      * @return
      */
-    public ResultVo withRemark(String remark) {
+    public ResultVo<T> withRemark(String remark) {
         this.setMsg(this.getMsg() + "(" + remark + ")");
         return this;
     }
 
-    public ResultVo withCount(Long count) {
+    public ResultVo<T> withCount(Long count) {
         this.setCount(count);
         return this;
     }
 
-    public ResultVo withTTL(Long ttl){
+    public ResultVo<T> withTTL(Long ttl){
         this.setTtl(ttl);
         return this;
     }
@@ -65,11 +66,11 @@ public class ResultVo<T> implements Serializable {
      * @param code 状态码
      * @return 失败返回结果
      */
-    public static ResultVo renderErr(CodeEnum code) {
-        return new ResultVo(code);
+    public static ResultVo<CodeEnum> renderErr(CodeEnum code) {
+        return new ResultVo<>(code);
     }
-    public static ResultVo renderErr() {
-        return new ResultVo(CodeEnum.ERR);
+    public static ResultVo<CodeEnum> renderErr() {
+        return new ResultVo<>(CodeEnum.ERR);
     }
 
     /**
@@ -77,8 +78,8 @@ public class ResultVo<T> implements Serializable {
      *
      * @return
      */
-    public static ResultVo renderVain() {
-        return new ResultVo(CodeEnum.INVALID_OPERATION);
+    public static ResultVo<CodeEnum> renderVain() {
+        return new ResultVo<>(CodeEnum.INVALID_OPERATION);
     }
 
     /**
@@ -86,8 +87,8 @@ public class ResultVo<T> implements Serializable {
      *
      * @return
      */
-    public static ResultVo renderOk() {
-        return new ResultVo(CodeEnum.OK);
+    public static ResultVo<CodeEnum> renderOk() {
+        return new ResultVo<>(CodeEnum.OK);
     }
 
     /**

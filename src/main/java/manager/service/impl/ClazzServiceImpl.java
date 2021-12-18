@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import manager.vo.ClazzScoreVo;
-import manager.vo.ClazzScoreVo2;
 import org.springframework.stereotype.Service;
 import manager.entity.Clazz;
 import manager.mapper.ClazzMapper;

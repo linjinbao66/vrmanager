@@ -1,11 +1,10 @@
 package manager.controller;
 
 
-import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -17,7 +16,6 @@ import manager.service.IScoreService;
 import manager.service.IUserService;
 import manager.util.BizException;
 import manager.util.CodeEnum;
-import manager.vo.ClazzScoreVo;
 import manager.vo.ClazzScoreVo2;
 import manager.vo.ResultVo;
 import org.apache.logging.log4j.util.Strings;
@@ -53,7 +51,7 @@ public class ClazzController {
 
     @ApiOperation(value = "获取班级列表")
     @GetMapping("/")
-    public ResultVo clazzList(
+    public ResultVo<Object> clazzList(
             @RequestParam(value = "name", required = false)String name,
             @RequestParam(value = "page",required = false, defaultValue = "1")Integer pageNum,
             @RequestParam(value = "limit",required = false, defaultValue = "5")Integer pageSize
@@ -63,10 +61,10 @@ public class ClazzController {
             columnMap.put("name", name);
         }
         QueryWrapper<Clazz> queryWrapper = new QueryWrapper<Clazz>().allEq(columnMap);
-        Page<Clazz> p = new Page<Clazz>(pageNum, pageSize);
+        Page<Clazz> p = new Page<>(pageNum, pageSize);
         Page<Clazz> userPage = clazzService.page(p, queryWrapper);
 
-        ResultVo vo = new ResultVo();
+        ResultVo<Object> vo = new ResultVo<>();
         vo.setCount(userPage.getTotal());
         vo.setCode(0);
         vo.setData(userPage.getRecords());
@@ -76,7 +74,7 @@ public class ClazzController {
 
     @ApiOperation(value = "新增班级")
     @PostMapping("/")
-    public ResultVo addOne(Clazz clazz){
+    public ResultVo<CodeEnum> addOne(Clazz clazz){
         validateClazz(clazz);
         if (null != clazzService.getOne(new QueryWrapper<Clazz>().eq("name",clazz.getName()))){
             return ResultVo.renderErr().withRemark("班级名称重复");
@@ -96,7 +94,7 @@ public class ClazzController {
 
     @ApiOperation(value = "修改班级")
     @PutMapping("/")
-    public ResultVo updateOne(@RequestBody Clazz clazz){
+    public ResultVo<CodeEnum> updateOne(@RequestBody Clazz clazz){
         validateClazz(clazz);
         if (Strings.isNotEmpty(clazz.getTeacherSn())){
             User one = userService.getOne(new QueryWrapper<User>().eq("sn", clazz.getTeacherSn())
@@ -113,7 +111,7 @@ public class ClazzController {
 
     @ApiOperation(value = "删除班级")
     @DeleteMapping("/{id}")
-    public ResultVo deleteOne(@PathVariable(value = "id")Long id){
+    public ResultVo<CodeEnum> deleteOne(@PathVariable(value = "id")Long id){
         Clazz byId = clazzService.getById(id);
         if (null == byId){
             return ResultVo.renderErr().withRemark("删除失败，记录不存在");
@@ -125,18 +123,18 @@ public class ClazzController {
     @ApiOperation(value = "批量删除班级")
     @ApiImplicitParam(name = "ids", value = "id数组", example = "[1 2 3]")
     @PostMapping("/delBatch")
-    public ResultVo deleteBatch(@RequestParam(value = "ids[]") Long[] ids){
+    public ResultVo<CodeEnum> deleteBatch(@RequestParam(value = "ids[]") Long[] ids){
         boolean b = clazzService.removeByIds(Arrays.asList(ids));
         return b ? ResultVo.renderOk().withRemark("删除成功") : ResultVo.renderErr().withRemark("删除失败");
     }
 
     @ApiOperation(value = "从excel批量导入")
     @PostMapping("/importBatch")
-    public ResultVo importBatch(@RequestParam("file") MultipartFile importBatch) throws IOException {
+    public ResultVo<CodeEnum> importBatch(@RequestParam("file") MultipartFile importBatch) throws IOException {
         ExcelReader reader = ExcelUtil.getReader(importBatch.getInputStream());
         List<Clazz> clazzList = reader.readAll(Clazz.class);
 
-        if(CollectionUtil.isEmpty(clazzList)){
+        if(CollUtil.isEmpty(clazzList)){
             return ResultVo.renderErr().withRemark("导入数据为空");
         }
 
@@ -152,47 +150,42 @@ public class ClazzController {
     @ApiOperation(value = "获取班级下的所有学生成绩")
     @ApiImplicitParam(name = "id", value = "班级id")
     @GetMapping("/score")
-    public ResultVo score(
+    public ResultVo<Object> score(
             @RequestParam(value = "clazzId")Long clazzId,
             @RequestParam(value = "page", required = false, defaultValue = "1")Long page,
             @RequestParam(value = "limit", required = false, defaultValue = "50")Long limit
     ){
-
-        Page<ClazzScoreVo> p = new Page<>(page, limit);
-        // IPage<ClazzScoreVo> voList = clazzService.getClazzScore(clazzId, p, null); 
         
         List<ClazzScoreVo2> vo2List = new ArrayList<>();
-        
         List<User> studeList =  userService.list(new QueryWrapper<User>().eq("clazz_id", clazzId).eq("role_id", 1));
         Clazz clazz = clazzService.getOne(new QueryWrapper<Clazz>().eq("id", clazzId));
         for(User student : studeList){
             List<Score> scores = scoreService.list(new QueryWrapper<Score>().eq("student_sn", student.getSn()).isNotNull("questionid"));
-            if(CollectionUtil.isEmpty(scores)) continue;
+            if(CollUtil.isEmpty(scores)) continue;
 
             long maxQuestionIdScore0 = scores.stream().filter(score -> score.getType()==0).mapToLong(Score::getQuestionid).max().orElse(0l);
             List<Score> scores0 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore0))
             .collect(Collectors.toList());
-
+            if(0 == maxQuestionIdScore0) continue;
             ClazzScoreVo2 vo2 = new ClazzScoreVo2();
             vo2.setSn(student.getSn());
             vo2.setName(null == clazz ? null : clazz.getName());
-            // vo2.setCreateDate();
+            if(CollUtil.isNotEmpty(scores0)){
+                vo2.setCreateDate(scores0.get(0).getCreateDate());
+            }
             double score0 = scores0.stream().filter(score->score.getType().equals(0)).mapToDouble(Score::getScore).sum();
             
             long maxQuestionIdScore1 = scores.stream().filter(score -> score.getType()==1).mapToLong(Score::getQuestionid).max().orElse(0l);
-            if(0 == maxQuestionIdScore1) continue;
+            
             List<Score> scores1 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore1))
             .collect(Collectors.toList());
-
             double score1 = scores1.stream().filter(score->score.getType().equals(1)).mapToDouble(Score::getScore).sum();
             vo2.setScore0(score0);
             vo2.setScore1(score1);
             vo2.setStudentName(student.getUsername());
             vo2List.add(vo2);
         }
-
-
-        ResultVo vo = new ResultVo();
+        ResultVo<Object> vo = new ResultVo<>();
         vo.setCode(0);
         vo.setData(vo2List);
         vo.setCount((long) vo2List.size());

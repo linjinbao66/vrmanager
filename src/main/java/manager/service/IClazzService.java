@@ -6,9 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import manager.entity.Clazz;
 import manager.vo.ClazzScoreVo;
-import manager.vo.ClazzScoreVo2;
 
-import java.util.List;
 
 /**
  * <p>
