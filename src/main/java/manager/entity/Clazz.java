@@ -23,7 +23,9 @@ public class Clazz implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    private Long id;
+
+    private Long clazzNo; //班级编号
 
     private Integer function1;
 
@@ -151,21 +153,20 @@ public class Clazz implements Serializable {
         this.teacherSn = teacherSn;
     }
 
+    public Long getClazzNo() {
+        return clazzNo;
+    }
+
+    public void setClazzNo(Long clazzNo) {
+        this.clazzNo = clazzNo;
+    }
+
     @Override
     public String toString() {
-        return "Clazz{" +
-        "id=" + id +
-        ", createDate=" + createDate +
-        ", creator=" + creator +
-        ", function1=" + function1 +
-        ", function2=" + function2 +
-        ", function3=" + function3 +
-        ", info=" + info +
-        ", name=" + name +
-        ", teacherId=" + teacherId +
-        ", updateDate=" + updateDate +
-        ", updater=" + updater +
-        ", teacherSn=" + teacherSn +
-        "}";
+        return "Clazz [clazzNo=" + clazzNo + ", createDate=" + createDate + ", creator=" + creator + ", function1="
+                + function1 + ", function2=" + function2 + ", function3=" + function3 + ", id=" + id + ", info=" + info
+                + ", name=" + name + ", teacherId=" + teacherId + ", teacherSn=" + teacherSn + ", updateDate="
+                + updateDate + ", updater=" + updater + "]";
     }
+
 }

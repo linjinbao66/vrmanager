@@ -2,6 +2,7 @@ package manager.controller;
 
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -18,7 +19,6 @@ import manager.util.BizException;
 import manager.util.CodeEnum;
 import manager.vo.ClazzScoreVo2;
 import manager.vo.ResultVo;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,7 +79,7 @@ public class ClazzController {
         if (null != clazzService.getOne(new QueryWrapper<Clazz>().eq("name",clazz.getName()))){
             return ResultVo.renderErr().withRemark("班级名称重复");
         }
-        if (Strings.isNotEmpty(clazz.getTeacherSn())){
+        if (StrUtil.isNotEmpty(clazz.getTeacherSn())){
             User one = userService.getOne(new QueryWrapper<User>().eq("sn", clazz.getTeacherSn())
                     .eq("role_id", "2"));
             if (null == one){
@@ -96,7 +96,7 @@ public class ClazzController {
     @PutMapping("/")
     public ResultVo<CodeEnum> updateOne(@RequestBody Clazz clazz){
         validateClazz(clazz);
-        if (Strings.isNotEmpty(clazz.getTeacherSn())){
+        if (StrUtil.isNotEmpty(clazz.getTeacherSn())){
             User one = userService.getOne(new QueryWrapper<User>().eq("sn", clazz.getTeacherSn())
                     .eq("role_id", "2"));
             if (null == one){
@@ -193,9 +193,11 @@ public class ClazzController {
         return vo;
     }
 
-
     private void validateClazz(Clazz clazz) {
-        if (Strings.isEmpty(clazz.getName())){
+        if(null == clazz.getClazzNo() || 0==clazz.getClazzNo()){
+            throw new BizException(CodeEnum.ERR).withRemark("班级编号必填");
+        }
+        if (StrUtil.isEmpty(clazz.getName())){
             throw new BizException(CodeEnum.ERR).withRemark("班级名称为空");
         }
         if (null == clazz.getFunction1()){

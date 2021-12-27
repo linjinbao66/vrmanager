@@ -1,3 +1,18 @@
 {
-    "java.configuration.updateBuildConfiguration": "disabled"
+    "java.configuration.updateBuildConfiguration": "disabled",
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "121.5.240.206",
+            "port": 3306,
+            "askForPassword": true,
+            "driver": "MariaDB",
+            "name": "121.5.240.206",
+            "database": "vrmanager",
+            "username": "amrom"
+        }
+    ]
 }

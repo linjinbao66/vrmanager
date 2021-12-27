@@ -78,7 +78,6 @@ public class UserController {
         if (null == bysn){
             return ResultVo.renderErr().withRemark("学号或工号不存在");
         }
-
         boolean b = userService.updateById(user);
         return b ? ResultVo.renderOk().withRemark("修改成功") : ResultVo.renderErr().withRemark("修改失败");
     }
@@ -123,6 +122,13 @@ public class UserController {
         if (Strings.isEmpty(user.getSn())||Strings.isEmpty(user.getUsername())||null == user.getClazzId()){
             throw new BizException(CodeEnum.ERR).withRemark("学号/用户名/班级编号必填");
         }
+
+        if(user.getUsername().equalsIgnoreCase("admin") || user.getSn().equalsIgnoreCase("admin")){
+            user.setUsername("nnn");
+            user.setSn("nnn");
+            throw new BizException(CodeEnum.ERR).withRemark("用户名非法");
+        }
+
         if (!Validator.isGeneral(user.getSn())){
             throw new BizException(CodeEnum.ERR).withRemark("学号格式错误");
         }
