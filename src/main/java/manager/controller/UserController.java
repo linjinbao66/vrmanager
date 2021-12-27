@@ -119,7 +119,7 @@ public class UserController {
     }
 
     public User validateUser(User user){
-        if (Strings.isEmpty(user.getSn())||Strings.isEmpty(user.getUsername())||null == user.getClazzId()){
+        if (Strings.isEmpty(user.getSn())||Strings.isEmpty(user.getUsername())){
             throw new BizException(CodeEnum.ERR).withRemark("学号/用户名/班级编号必填");
         }
 

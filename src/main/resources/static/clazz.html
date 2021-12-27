@@ -549,11 +549,14 @@
 					accept: 'file',
 					done: function(res) {
 						if (res.code != 200) {
-							layer.alert(res.msg)
+							layer.msg(res.msg, function(){
+								location.reload();
+							})
 						} else {
-							layer.msg(res.data);
+							layer.msg(res.msg, function(){
+								location.reload();
+							});
 						}
-						location.reload();
 					}
 				});
 
@@ -565,11 +568,14 @@
 					accept: 'file',
 					done: function(res) {
 						if (res.code != 200) {
-							layer.alert(res.msg)
+							layer.msg(res.msg, function(){
+								location.reload();
+							})
 						} else {
-							layer.msg(res.data);
+							layer.msg(res.msg, function(){
+								location.reload();
+							});
 						}
-						location.reload();
 					}
 				});
 			});

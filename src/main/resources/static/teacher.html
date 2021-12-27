@@ -213,12 +213,15 @@
 					,exts: 'xls|xlsx'
 					,accept: 'file' 
 					,done: function(res){
-						if(res.code != 200){
-							layer.alert(res.msg)
-						}else{
-							layer.alert(res.msg)
+						if (res.code != 200) {
+							layer.msg(res.msg, function(){
+								location.reload();
+							})
+						} else {
+							layer.msg(res.msg, function(){
+								location.reload();
+							});
 						}
-						location.reload();
 					},
 					headers: { 'admin-token': localStorage.getItem("jwt") },
 				});
