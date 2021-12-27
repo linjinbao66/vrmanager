@@ -1,4 +1,5 @@
 server:
+  port: 9001
   servlet:
     encoding:
       enabled: true
@@ -10,7 +11,7 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/vrmanager?setUnicode=true&characterEncoding=utf8&useAffectedRows=true
     username: amrom
     password: 369369
