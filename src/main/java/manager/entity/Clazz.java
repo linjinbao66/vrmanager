@@ -57,11 +57,11 @@ public class Clazz implements Serializable {
     @TableField(fill = FieldFill.UPDATE)
     private String updater;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
