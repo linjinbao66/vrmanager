@@ -457,7 +457,7 @@
 									elem: '#studentTable' ,
 									height: 'full-230',
 									toolbar: '#studentToolBar',
-									url: "/user/?clazzId=" + data.id,
+									url: "/user/?clazzNo=" + data.clazzNo,
 									page: true,
 									cols: [
 										[{
@@ -494,12 +494,12 @@
 					} else if (obj.event === 'viewScore') {
 						element.tabAdd('demo', {
 							title: data.name + '成绩'
-							,content: '<table class="layui-hide" id="clazzScoreTable-' + data.id + '" lay-filter="clazzScoreTable"></table>'
+							,content: '<table class="layui-hide" id="clazzScoreTable-' + data.clazzNo + '" lay-filter="clazzScoreTable"></table>'
 							,id: data.id
 						});
 						table.render({
-							elem: '#clazzScoreTable-' + data.id ,
-							url: '/clazz/score/?clazzId=' + data.id,
+							elem: '#clazzScoreTable-' + data.clazzNo ,
+							url: '/clazz/score/?clazzNo=' + data.clazzNo,
 							height: 'full-190',
 							toolbar: '#clazzScoreToolbar',
 							defaultToolbar: ['filter', 'exports'],

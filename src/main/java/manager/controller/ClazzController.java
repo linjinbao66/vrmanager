@@ -164,14 +164,21 @@ public class ClazzController {
     @ApiImplicitParam(name = "id", value = "班级id")
     @GetMapping("/score")
     public ResultVo score(
-            @RequestParam(value = "clazzId")Long clazzId,
+            @RequestParam(value = "clazzId", required = false)Long clazzId,
+            @RequestParam(value = "clazzNo", required = false) Long clazzNo,
             @RequestParam(value = "page", required = false, defaultValue = "1")Long page,
             @RequestParam(value = "limit", required = false, defaultValue = "50")Long limit
     ){
-        
         List<ClazzScoreVo2> vo2List = new ArrayList<>();
-        List<User> studeList =  userService.list(new QueryWrapper<User>().eq("clazz_id", clazzId).eq("role_id", 1));//获取班级下所有学生
-        Clazz clazz = clazzService.getOne(new QueryWrapper<Clazz>().eq("id", clazzId));//获取班级
+        QueryWrapper<User> queryWrapper = new QueryWrapper<User>();
+        if(clazzId != null){
+            queryWrapper = queryWrapper.eq("clazz_id", clazzId);
+        }
+        if(clazzNo != null){
+            queryWrapper = queryWrapper.eq("clazz_no", clazzNo);
+        }
+        List<User> studeList =  userService.list(queryWrapper.eq("role_id", 1));//获取班级下所有学生
+        Clazz clazz = clazzService.getOne(new QueryWrapper<Clazz>().eq("id", clazzId).or().eq("clazz_no", clazzNo));//获取班级
         for(User student : studeList){
             //遍历学生
             List<Score> scores = scoreService.list(new QueryWrapper<Score>().eq("student_sn", student.getSn()).isNotNull("questionid"));

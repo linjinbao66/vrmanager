@@ -30,6 +30,7 @@ public class UserController {
     @GetMapping("/")
     public ResultVo users(
             @RequestParam(value = "clazzId", required = false)Long clazzId,
+            @RequestParam(value = "clazzNo", required = false)Long clazzNo,
             @RequestParam(value = "limit",required = false, defaultValue = "5")Long limit,
             @RequestParam(value = "page",required = false, defaultValue = "1")Long page,
             @RequestParam(value = "username", required = false)String username,
@@ -38,6 +39,9 @@ public class UserController {
         Map<String, Object> columnMap = new HashMap<>();
         if (null != clazzId){
             columnMap.put("clazz_id", clazzId);
+        }
+        if (null != clazzNo){
+            columnMap.put("clazz_no", clazzNo);
         }
         if (null != roleId){
             columnMap.put("role_id", roleId);
@@ -120,7 +124,7 @@ public class UserController {
 
     public User validateUser(User user){
         if (Strings.isEmpty(user.getSn())||Strings.isEmpty(user.getUsername())){
-            throw new BizException(CodeEnum.ERR).withRemark("学号/用户名/班级编号必填");
+            throw new BizException(CodeEnum.ERR).withRemark("学号/用户名必填");
         }
 
         if(user.getUsername().equalsIgnoreCase("admin") || user.getSn().equalsIgnoreCase("admin")){
