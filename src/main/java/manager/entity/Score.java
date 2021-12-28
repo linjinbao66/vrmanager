@@ -27,7 +27,7 @@ public class Score implements Serializable {
 
     private String question;
 
-    private Integer type;
+    private Integer type;  //0理论，1考核
 
     private String studentSn;
 

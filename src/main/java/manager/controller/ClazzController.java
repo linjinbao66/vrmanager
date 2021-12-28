@@ -150,20 +150,21 @@ public class ClazzController {
     @ApiOperation(value = "获取班级下的所有学生成绩")
     @ApiImplicitParam(name = "id", value = "班级id")
     @GetMapping("/score")
-    public ResultVo<Object> score(
+    public ResultVo score(
             @RequestParam(value = "clazzId")Long clazzId,
             @RequestParam(value = "page", required = false, defaultValue = "1")Long page,
             @RequestParam(value = "limit", required = false, defaultValue = "50")Long limit
     ){
         
         List<ClazzScoreVo2> vo2List = new ArrayList<>();
-        List<User> studeList =  userService.list(new QueryWrapper<User>().eq("clazz_id", clazzId).eq("role_id", 1));
-        Clazz clazz = clazzService.getOne(new QueryWrapper<Clazz>().eq("id", clazzId));
+        List<User> studeList =  userService.list(new QueryWrapper<User>().eq("clazz_id", clazzId).eq("role_id", 1));//获取班级下所有学生
+        Clazz clazz = clazzService.getOne(new QueryWrapper<Clazz>().eq("id", clazzId));//获取班级
         for(User student : studeList){
+            //遍历学生
             List<Score> scores = scoreService.list(new QueryWrapper<Score>().eq("student_sn", student.getSn()).isNotNull("questionid"));
             if(CollUtil.isEmpty(scores)) continue;
 
-            long maxQuestionIdScore0 = scores.stream().filter(score -> score.getType()==0).mapToLong(Score::getQuestionid).max().orElse(0l);
+            long maxQuestionIdScore0 = scores.stream().filter(score -> score.getType()==0).mapToLong(Score::getQuestionid).max().orElse(0l);//理论成绩的最大值
             List<Score> scores0 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore0))
             .collect(Collectors.toList());
             if(0 == maxQuestionIdScore0) continue;
@@ -173,16 +174,17 @@ public class ClazzController {
             if(CollUtil.isNotEmpty(scores0)){
                 vo2.setCreateDate(scores0.get(0).getCreateDate());
             }
-            double score0 = scores0.stream().filter(score->score.getType().equals(0)).mapToDouble(Score::getScore).sum();
+            double score0 = scores0.stream().filter(score->score.getType().equals(0)).mapToDouble(Score::getScore).sum();//理论总成绩
             
-            long maxQuestionIdScore1 = scores.stream().filter(score -> score.getType()==1).mapToLong(Score::getQuestionid).max().orElse(0l);
+            long maxQuestionIdScore1 = scores.stream().filter(score -> score.getType()==1).mapToLong(Score::getQuestionid).max().orElse(0l);//实操成绩最大值
             
             List<Score> scores1 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore1))
             .collect(Collectors.toList());
-            double score1 = scores1.stream().filter(score->score.getType().equals(1)).mapToDouble(Score::getScore).sum();
+            double score1 = scores1.stream().filter(score->score.getType().equals(1)).mapToDouble(Score::getScore).sum();//实操总成绩
             vo2.setScore0(score0);
             vo2.setScore1(score1);
             vo2.setStudentName(student.getUsername());
+            vo2.setOperationTimes((long) (scores0.size() + scores1.size()));
             vo2List.add(vo2);
         }
         ResultVo<Object> vo = new ResultVo<>();

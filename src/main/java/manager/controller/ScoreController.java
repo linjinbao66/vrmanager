@@ -195,5 +195,4 @@ public class ScoreController {
         boolean b = scoreService.saveBatch(scoreList);
         return b ? ResultVo.renderOk().withRemark("导入成绩成功！") : ResultVo.renderErr().withRemark("导入失败！");
     }
-
 }
