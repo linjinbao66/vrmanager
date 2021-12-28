@@ -10,3 +10,9 @@ ALTER TABLE clazz ADD COLUMN clazz_no BIGINT(20) NULL;
 
 USE vrmanager;
 CREATE TABLE clazz_user(id BIGINT(20), clazz_no BIGINT(20), user_sn BIGINT(20));ALTER TABLE clazz ADD UNIQUE KEY(clazz_no);
+
+-- 调整clazz表
+
+ALTER TABLE clazz ADD UNIQUE KEY(clazz_no);
+
+alter table clazz drop index clazz_name_uindex;
