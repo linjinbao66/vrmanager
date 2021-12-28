@@ -91,9 +91,7 @@ public class ClazzController {
     @PostMapping("/")
     public ResultVo<CodeEnum> addOne(Clazz clazz){
         validateClazz(clazz);
-        if (null != clazzService.getOne(new QueryWrapper<Clazz>().eq("name",clazz.getName()))){
-            return ResultVo.renderErr().withRemark("班级名称重复");
-        }
+        
         if (StrUtil.isNotEmpty(clazz.getTeacherSn())){
             User one = userService.getOne(new QueryWrapper<User>().eq("sn", clazz.getTeacherSn())
                     .eq("role_id", "2"));

@@ -9,4 +9,4 @@ ALTER TABLE clazz ADD COLUMN clazz_no BIGINT(20) NULL;
 -- 增加表clazz_user
 
 USE vrmanager;
-CREATE TABLE clazz_user(id BIGINT(20), clazz_no BIGINT(20), user_sn BIGINT(20));
+CREATE TABLE clazz_user(id BIGINT(20), clazz_no BIGINT(20), user_sn BIGINT(20));ALTER TABLE clazz ADD UNIQUE KEY(clazz_no);
