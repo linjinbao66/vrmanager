@@ -18,6 +18,7 @@ import manager.service.IUserService;
 import manager.util.BizException;
 import manager.util.CodeEnum;
 import manager.vo.ClazzScoreVo2;
+import manager.vo.ClazzVo;
 import manager.vo.ResultVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -62,12 +63,26 @@ public class ClazzController {
         }
         QueryWrapper<Clazz> queryWrapper = new QueryWrapper<Clazz>().allEq(columnMap);
         Page<Clazz> p = new Page<>(pageNum, pageSize);
-        Page<Clazz> userPage = clazzService.page(p, queryWrapper);
-
+        Page<Clazz> clazzpage = clazzService.page(p, queryWrapper);
+        List<User> teachUsers = userService.list(new QueryWrapper<User>().eq("role_id", 2));
+        List<ClazzVo> clazzVos = new ArrayList<>();
+        for(Clazz clazz : clazzpage.getRecords()){
+            ClazzVo clazzVo = new ClazzVo();
+            clazzVo.setId(clazz.getId());
+            clazzVo.setName(clazz.getName());
+            clazzVo.setUsername(teachUsers.stream().filter(user -> user.getId().equals(clazz.getTeacherId())||user.getSn().equals(clazz.getTeacherSn())).findAny().orElse(new User()).getUsername());
+            clazzVo.setCreateDate(clazz.getCreateDate());
+            clazzVo.setFunction1(clazz.getFunction1());
+            clazzVo.setFunction2(clazz.getFunction2());
+            clazzVo.setFunction3(clazz.getFunction3());
+            clazzVo.setInfo(clazz.getInfo());
+            clazzVo.setClazzNo(clazz.getClazzNo());
+            clazzVos.add(clazzVo);
+        }
         ResultVo<Object> vo = new ResultVo<>();
-        vo.setCount(userPage.getTotal());
+        vo.setCount(clazzpage.getTotal());
         vo.setCode(0);
-        vo.setData(userPage.getRecords());
+        vo.setData(clazzVos);
         vo.setMsg("查询班级列表成功");
         return vo;
     }
