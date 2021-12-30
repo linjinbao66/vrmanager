@@ -33,6 +33,8 @@ public class User implements Serializable {
 
     private Long clazzId;
 
+    private Long clazzNo;       //班级编号
+
     private Integer roleId;     //0管理员 1学生 2教师
 
     @ApiModelProperty(hidden = true)
@@ -163,23 +165,20 @@ public class User implements Serializable {
         this.updater = updater;
     }
 
+    public Long getClazzNo() {
+        return clazzNo;
+    }
+
+    public void setClazzNo(Long clazzNo) {
+        this.clazzNo = clazzNo;
+    }
+
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", mobile='" + mobile + '\'' +
-                ", password='" + password + '\'' +
-                ", photo='" + photo + '\'' +
-                ", qq='" + qq + '\'' +
-                ", sex='" + sex + '\'' +
-                ", sn='" + sn + '\'' +
-                ", username='" + username + '\'' +
-                ", clazzId=" + clazzId +
-                ", roleId=" + roleId +
-                ", createDate=" + createDate +
-                ", creator='" + creator + '\'' +
-                ", updateDate=" + updateDate +
-                ", updater='" + updater + '\'' +
-                '}';
+        return "User [clazzId=" + clazzId + ", clazzNo=" + clazzNo + ", createDate=" + createDate + ", creator="
+                + creator + ", id=" + id + ", mobile=" + mobile + ", password=" + password + ", photo=" + photo
+                + ", qq=" + qq + ", roleId=" + roleId + ", sex=" + sex + ", sn=" + sn + ", updateDate=" + updateDate
+                + ", updater=" + updater + ", username=" + username + "]";
     }
+    
 }

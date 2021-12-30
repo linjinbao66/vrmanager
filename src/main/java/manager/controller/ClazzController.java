@@ -18,6 +18,7 @@ import manager.service.IUserService;
 import manager.util.BizException;
 import manager.util.CodeEnum;
 import manager.vo.ClazzScoreVo2;
+import manager.vo.ClazzVo;
 import manager.vo.ResultVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -62,12 +63,26 @@ public class ClazzController {
         }
         QueryWrapper<Clazz> queryWrapper = new QueryWrapper<Clazz>().allEq(columnMap);
         Page<Clazz> p = new Page<>(pageNum, pageSize);
-        Page<Clazz> userPage = clazzService.page(p, queryWrapper);
-
+        Page<Clazz> clazzpage = clazzService.page(p, queryWrapper);
+        List<User> teachUsers = userService.list(new QueryWrapper<User>().eq("role_id", 2));
+        List<ClazzVo> clazzVos = new ArrayList<>();
+        for(Clazz clazz : clazzpage.getRecords()){
+            ClazzVo clazzVo = new ClazzVo();
+            clazzVo.setId(clazz.getId());
+            clazzVo.setName(clazz.getName());
+            clazzVo.setUsername(teachUsers.stream().filter(user -> user.getId().equals(clazz.getTeacherId())||user.getSn().equals(clazz.getTeacherSn())).findAny().orElse(new User()).getUsername());
+            clazzVo.setCreateDate(clazz.getCreateDate());
+            clazzVo.setFunction1(clazz.getFunction1());
+            clazzVo.setFunction2(clazz.getFunction2());
+            clazzVo.setFunction3(clazz.getFunction3());
+            clazzVo.setInfo(clazz.getInfo());
+            clazzVo.setClazzNo(clazz.getClazzNo());
+            clazzVos.add(clazzVo);
+        }
         ResultVo<Object> vo = new ResultVo<>();
-        vo.setCount(userPage.getTotal());
+        vo.setCount(clazzpage.getTotal());
         vo.setCode(0);
-        vo.setData(userPage.getRecords());
+        vo.setData(clazzVos);
         vo.setMsg("查询班级列表成功");
         return vo;
     }
@@ -76,9 +91,7 @@ public class ClazzController {
     @PostMapping("/")
     public ResultVo<CodeEnum> addOne(Clazz clazz){
         validateClazz(clazz);
-        if (null != clazzService.getOne(new QueryWrapper<Clazz>().eq("name",clazz.getName()))){
-            return ResultVo.renderErr().withRemark("班级名称重复");
-        }
+        
         if (StrUtil.isNotEmpty(clazz.getTeacherSn())){
             User one = userService.getOne(new QueryWrapper<User>().eq("sn", clazz.getTeacherSn())
                     .eq("role_id", "2"));
@@ -150,20 +163,28 @@ public class ClazzController {
     @ApiOperation(value = "获取班级下的所有学生成绩")
     @ApiImplicitParam(name = "id", value = "班级id")
     @GetMapping("/score")
-    public ResultVo<Object> score(
-            @RequestParam(value = "clazzId")Long clazzId,
+    public ResultVo score(
+            @RequestParam(value = "clazzId", required = false)Long clazzId,
+            @RequestParam(value = "clazzNo", required = false) Long clazzNo,
             @RequestParam(value = "page", required = false, defaultValue = "1")Long page,
             @RequestParam(value = "limit", required = false, defaultValue = "50")Long limit
     ){
-        
         List<ClazzScoreVo2> vo2List = new ArrayList<>();
-        List<User> studeList =  userService.list(new QueryWrapper<User>().eq("clazz_id", clazzId).eq("role_id", 1));
-        Clazz clazz = clazzService.getOne(new QueryWrapper<Clazz>().eq("id", clazzId));
+        QueryWrapper<User> queryWrapper = new QueryWrapper<User>();
+        if(clazzId != null){
+            queryWrapper = queryWrapper.eq("clazz_id", clazzId);
+        }
+        if(clazzNo != null){
+            queryWrapper = queryWrapper.eq("clazz_no", clazzNo);
+        }
+        List<User> studeList =  userService.list(queryWrapper.eq("role_id", 1));//获取班级下所有学生
+        Clazz clazz = clazzService.getOne(new QueryWrapper<Clazz>().eq("id", clazzId).or().eq("clazz_no", clazzNo));//获取班级
         for(User student : studeList){
+            //遍历学生
             List<Score> scores = scoreService.list(new QueryWrapper<Score>().eq("student_sn", student.getSn()).isNotNull("questionid"));
             if(CollUtil.isEmpty(scores)) continue;
 
-            long maxQuestionIdScore0 = scores.stream().filter(score -> score.getType()==0).mapToLong(Score::getQuestionid).max().orElse(0l);
+            long maxQuestionIdScore0 = scores.stream().filter(score -> score.getType()==0).mapToLong(Score::getQuestionid).max().orElse(0l);//理论成绩的最大值
             List<Score> scores0 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore0))
             .collect(Collectors.toList());
             if(0 == maxQuestionIdScore0) continue;
@@ -173,16 +194,17 @@ public class ClazzController {
             if(CollUtil.isNotEmpty(scores0)){
                 vo2.setCreateDate(scores0.get(0).getCreateDate());
             }
-            double score0 = scores0.stream().filter(score->score.getType().equals(0)).mapToDouble(Score::getScore).sum();
+            double score0 = scores0.stream().filter(score->score.getType().equals(0)).mapToDouble(Score::getScore).sum();//理论总成绩
             
-            long maxQuestionIdScore1 = scores.stream().filter(score -> score.getType()==1).mapToLong(Score::getQuestionid).max().orElse(0l);
+            long maxQuestionIdScore1 = scores.stream().filter(score -> score.getType()==1).mapToLong(Score::getQuestionid).max().orElse(0l);//实操成绩最大值
             
             List<Score> scores1 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore1))
             .collect(Collectors.toList());
-            double score1 = scores1.stream().filter(score->score.getType().equals(1)).mapToDouble(Score::getScore).sum();
+            double score1 = scores1.stream().filter(score->score.getType().equals(1)).mapToDouble(Score::getScore).sum();//实操总成绩
             vo2.setScore0(score0);
             vo2.setScore1(score1);
             vo2.setStudentName(student.getUsername());
+            vo2.setOperationTimes((long) (scores0.size() + scores1.size()));
             vo2List.add(vo2);
         }
         ResultVo<Object> vo = new ResultVo<>();

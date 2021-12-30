@@ -2,14 +2,17 @@ package manager.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
+
 
 @ToString
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ClazzVo implements Serializable {
     private String username;    //负责老师姓名
     private Long id;
@@ -22,9 +25,11 @@ public class ClazzVo implements Serializable {
     private Integer function1; //实验结构功能
     private Integer function2; //实验教练功能
     private Integer function3; //实验考核功能
-
-    private Date createDate;    //创建日期
+    
+    private LocalDateTime createDate;    //创建日期
     private String creator;     //创建者
-    private Date updateDate;    //修改者
+    private LocalDateTime updateDate;    //修改者
     private String updater;     //修改日期
+
+    private Long clazzNo;
 }

@@ -63,6 +63,10 @@
 				</div>
 			</div>
 		</div>
+
+		<script type="text/html" id="clazzScoreToolbar">
+			
+		</script>
 			
 		<script src="layui/layui.js"></script>
 		<script>
@@ -221,7 +225,7 @@
 								type: 'checkbox',
 								fixed: 'left'
 							}, {
-								field: 'id',
+								field: 'clazzNo',
 								title: '班级编号',
 								align: 'center',
 								sort: true
@@ -453,7 +457,7 @@
 									elem: '#studentTable' ,
 									height: 'full-230',
 									toolbar: '#studentToolBar',
-									url: "/user/?clazzId=" + data.id,
+									url: "/user/?clazzNo=" + data.clazzNo,
 									page: true,
 									cols: [
 										[{
@@ -490,14 +494,15 @@
 					} else if (obj.event === 'viewScore') {
 						element.tabAdd('demo', {
 							title: data.name + '成绩'
-							,content: '<table class="layui-hide" id="clazzScoreTable-' + data.id + '" lay-filter="clazzScoreTable"></table>'
+							,content: '<table class="layui-hide" id="clazzScoreTable-' + data.clazzNo + '" lay-filter="clazzScoreTable"></table>'
 							,id: data.id
 						});
 						table.render({
-							elem: '#clazzScoreTable-' + data.id ,
-							url: '/clazz/score/?clazzId=' + data.id,
+							elem: '#clazzScoreTable-' + data.clazzNo ,
+							url: '/clazz/score/?clazzNo=' + data.clazzNo,
 							height: 'full-190',
-							defaultToolbar: ['filter', 'exports', 'print'],
+							toolbar: '#clazzScoreToolbar',
+							defaultToolbar: ['filter', 'exports'],
 							title: '班级-成绩数据表',
 							cols: [
 								[{
@@ -509,9 +514,14 @@
 									align: 'center',
 									sort: true
 								}, {
+									field: 'sn',
+									title: '学号',
+									align: 'center',
+									hide: true
+								},{
 									field: 'studentName',
 									title: '学生姓名',
-									align: 'center',
+									align: 'center'
 								}, {
 									field: 'score0',
 									title: '理论考核总分',
@@ -520,6 +530,11 @@
 									field: 'score1',
 									title: '实验考核总分',
 									align: 'center'
+								},{
+									field: 'operationTimes',
+									title: '考试次数',
+									align: 'center',
+									hide: true
 								}, {
 									title: '考核详情',
 									align: 'center',
