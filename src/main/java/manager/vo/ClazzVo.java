@@ -31,5 +31,5 @@ public class ClazzVo implements Serializable {
     private LocalDateTime updateDate;    //修改者
     private String updater;     //修改日期
 
-    private Long clazzNo;
+    private String clazzNo;
 }

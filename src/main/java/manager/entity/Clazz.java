@@ -25,7 +25,7 @@ public class Clazz implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    private Long clazzNo; //班级编号
+    private String clazzNo; //班级编号
 
     private Integer function1;
 
@@ -153,11 +153,11 @@ public class Clazz implements Serializable {
         this.teacherSn = teacherSn;
     }
 
-    public Long getClazzNo() {
+    public String getClazzNo() {
         return clazzNo;
     }
 
-    public void setClazzNo(Long clazzNo) {
+    public void setClazzNo(String clazzNo) {
         this.clazzNo = clazzNo;
     }
 

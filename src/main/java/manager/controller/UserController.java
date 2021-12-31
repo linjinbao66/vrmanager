@@ -30,7 +30,7 @@ public class UserController {
     @GetMapping("/")
     public ResultVo users(
             @RequestParam(value = "clazzId", required = false)Long clazzId,
-            @RequestParam(value = "clazzNo", required = false)Long clazzNo,
+            @RequestParam(value = "clazzNo", required = false)String clazzNo,
             @RequestParam(value = "limit",required = false, defaultValue = "5")Long limit,
             @RequestParam(value = "page",required = false, defaultValue = "1")Long page,
             @RequestParam(value = "username", required = false)String username,

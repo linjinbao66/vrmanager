@@ -165,7 +165,7 @@ public class ClazzController {
     @GetMapping("/score")
     public ResultVo score(
             @RequestParam(value = "clazzId", required = false)Long clazzId,
-            @RequestParam(value = "clazzNo", required = false) Long clazzNo,
+            @RequestParam(value = "clazzNo", required = false) String clazzNo,
             @RequestParam(value = "page", required = false, defaultValue = "1")Long page,
             @RequestParam(value = "limit", required = false, defaultValue = "50")Long limit
     ){
@@ -174,7 +174,7 @@ public class ClazzController {
         if(clazzId != null){
             queryWrapper = queryWrapper.eq("clazz_id", clazzId);
         }
-        if(clazzNo != null){
+        if(StrUtil.isNotEmpty(clazzNo)){
             queryWrapper = queryWrapper.eq("clazz_no", clazzNo);
         }
         List<User> studeList =  userService.list(queryWrapper.eq("role_id", 1));//获取班级下所有学生
@@ -216,7 +216,7 @@ public class ClazzController {
     }
 
     private void validateClazz(Clazz clazz) {
-        if(null == clazz.getClazzNo() || 0==clazz.getClazzNo()){
+        if(StrUtil.isEmpty(clazz.getClazzNo())){
             throw new BizException(CodeEnum.ERR).withRemark("班级编号必填");
         }
         if (StrUtil.isEmpty(clazz.getName())){
