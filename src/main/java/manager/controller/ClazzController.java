@@ -207,6 +207,7 @@ public class ClazzController {
             vo2.setOperationTimes((long) (scores0.size() + scores1.size()));
             vo2List.add(vo2);
         }
+        // Collections.sort(vo2List, c);
         ResultVo<Object> vo = new ResultVo<>();
         vo.setCode(0);
         vo.setData(vo2List);
