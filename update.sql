@@ -20,3 +20,6 @@ alter table clazz drop index clazz_name_uindex;
 -- 调整user表
 alter table user add column clazz_no bigint(20);
 update user set user.clazz_no=user.clazz_id where user.role_id=1;
+
+alter table user modify column clazz_no varchar(255) null;
+alter table clazz modify column clazz_no varchar(255) not null unique key;

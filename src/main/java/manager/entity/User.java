@@ -33,7 +33,7 @@ public class User implements Serializable {
 
     private Long clazzId;
 
-    private Long clazzNo;       //班级编号
+    private String clazzNo;       //班级编号
 
     private Integer roleId;     //0管理员 1学生 2教师
 
@@ -165,11 +165,11 @@ public class User implements Serializable {
         this.updater = updater;
     }
 
-    public Long getClazzNo() {
+    public String getClazzNo() {
         return clazzNo;
     }
 
-    public void setClazzNo(Long clazzNo) {
+    public void setClazzNo(String clazzNo) {
         this.clazzNo = clazzNo;
     }
 
