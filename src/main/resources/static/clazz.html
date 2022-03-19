@@ -154,7 +154,7 @@
 								table.render({
 									elem: '#transfer' ,
 									height: 'full-230',
-									url: "/score/studentScore?page=1&limit=10&type=0&sn=" + data.sn,
+									url: "/score/studentScore?page=1&limit=10&type=0&sn=" + data.sn +"&clazzNo="+data.clazzNo,
 									page: true,
 									cols: [
 										[{
@@ -180,7 +180,7 @@
 								table.render({
 									elem: '#transfer2' ,
 									height: 'full-230',
-									url: "/score/studentScore?page=1&limit=25&type=1&sn=" + data.sn,
+									url: "/score/studentScore?page=1&limit=25&type=1&sn=" + data.sn +"&clazzNo="+data.clazzNo,
 									where: {
 									},
 									page: true,

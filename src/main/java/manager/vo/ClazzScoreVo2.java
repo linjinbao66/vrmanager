@@ -21,4 +21,5 @@ public class ClazzScoreVo2 implements Serializable {
 
     private LocalDateTime createDate;    //创建日期
     private LocalDateTime updateDate;    //修改者
+    private String clazzNo; //班级编号
 }

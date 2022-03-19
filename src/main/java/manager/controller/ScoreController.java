@@ -87,12 +87,16 @@ public class ScoreController {
         return vo;
     }
 
+    //clazzNo班级编号
     @GetMapping("/studentScore")
-    public ResultVo studentScore(@RequestParam(value = "sn") String sn, @RequestParam(value = "type") Long type) {
+    public ResultVo studentScore(
+            @RequestParam(value = "sn") String sn,
+            @RequestParam(value = "clazzNo",required = false)String clazzNo,
+            @RequestParam(value = "type") Long type) {
 
-        User stu = userService.getOne(new QueryWrapper<User>().eq("role_id", 1).eq("sn", sn));
+        User stu = userService.getOne(new QueryWrapper<User>().eq("role_id", 1).eq("sn", sn).eq("clazz_no",clazzNo));
         if (null == stu)
-            return ResultVo.renderErr().withRemark("学生不存在");
+            return ResultVo.renderErr().withRemark("学生不存在").withRemark(sn);
 
         List<Score> scores = scoreService.list(new QueryWrapper<Score>()
                 .eq("student_sn", sn)
