@@ -523,8 +523,7 @@
 									field: 'sn',
 									title: '学号',
 									align: 'center',
-									sort: true,
-									hide: true
+									sort: true
 								},{
 									field: 'studentName',
 									title: '学生姓名',
@@ -541,8 +540,7 @@
 								},{
 									field: 'operationTimes',
 									title: '考试次数',
-									align: 'center',
-									hide: true
+									align: 'center'
 								}, {
 									title: '考核详情',
 									align: 'center',
@@ -631,7 +629,7 @@
 			async function uploadFile() {
 				let formData = new FormData();
 				formData.append("file", fileupload.files[0]);
-				let response = await fetch('/user/importBatch?clazzNo='+defaultClazzNo, {
+				let response = await fetch('/user/importBatch?roleId=1&clazzNo='+defaultClazzNo, {
 					method: "POST",
 					headers: { 'admin-token': localStorage.getItem("jwt") },
 					body: formData

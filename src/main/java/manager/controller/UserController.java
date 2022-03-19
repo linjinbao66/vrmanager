@@ -106,6 +106,7 @@ public class UserController {
     @PostMapping("/importBatch")
     public ResultVo importBatch(
             @RequestParam(value = "clazzNo", required = false)String clazzNo,
+            @RequestParam(value = "roleId", required = false)Integer roleId,
             @RequestParam("file") MultipartFile importBatch) throws Exception {
         ExcelReader reader = ExcelUtil.getReader(importBatch.getInputStream());
         List<User> userList = reader.readAll(User.class);
@@ -121,7 +122,10 @@ public class UserController {
 
         //修正用户信息
         if (Strings.isNotEmpty(clazzNo)){
-            userList.stream().forEach(user -> {user.setClazzNo(clazzNo);user.setRoleId(1);});
+            userList.stream().forEach(user -> user.setClazzNo(clazzNo));
+        }
+        if (null != roleId){
+            userList.stream().forEach(user ->user.setRoleId(roleId));
         }
 
         boolean b = userService.saveBatch(userList);
