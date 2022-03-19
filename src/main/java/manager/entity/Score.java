@@ -61,6 +61,16 @@ public class Score implements Serializable {
     @TableField(fill = FieldFill.UPDATE)
     private String updater;
 
+    private String clazzNo;
+
+    public String getClazzNo() {
+        return clazzNo;
+    }
+
+    public void setClazzNo(String clazzNo) {
+        this.clazzNo = clazzNo;
+    }
+
     public Long getId() {
         return id;
     }
@@ -184,21 +194,22 @@ public class Score implements Serializable {
     @Override
     public String toString() {
         return "Score{" +
-        "id=" + id +
-        ", createDate=" + createDate +
-        ", creator=" + creator +
-        ", operationTimes=" + operationTimes +
-        ", progress=" + progress +
-        ", remark=" + remark +
-        ", score=" + score +
-        ", studentId=" + studentId +
-        ", updateDate=" + updateDate +
-        ", updater=" + updater +
-        ", question=" + question +
-        ", type=" + type +
-        ", studentSn=" + studentSn +
-        ", questionid=" + questionid +
-        ", studentName=" + studentName +
-        "}";
+                "id=" + id +
+                ", question='" + question + '\'' +
+                ", type=" + type +
+                ", studentSn='" + studentSn + '\'' +
+                ", studentName='" + studentName + '\'' +
+                ", questionid=" + questionid +
+                ", operationTimes=" + operationTimes +
+                ", progress='" + progress + '\'' +
+                ", remark='" + remark + '\'' +
+                ", score=" + score +
+                ", studentId=" + studentId +
+                ", createDate=" + createDate +
+                ", updateDate=" + updateDate +
+                ", creator='" + creator + '\'' +
+                ", updater='" + updater + '\'' +
+                ", clazzNo='" + clazzNo + '\'' +
+                '}';
     }
 }

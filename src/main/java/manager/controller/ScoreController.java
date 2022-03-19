@@ -54,6 +54,7 @@ public class ScoreController {
     @GetMapping("/")
     public ResultVo<Object> scoreList(
             @RequestParam(value = "sn", required = false) String sn,
+            @RequestParam(value = "clazzNo", required = false) String clazzNo,
             @RequestParam(value = "type", required = false) Long type,
             @RequestParam(value = "question", required = false) String question,
             @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNum,
@@ -61,6 +62,9 @@ public class ScoreController {
         Map<String, Object> columnMap = new HashMap<>();
         if (Strings.isNotEmpty(sn)) {
             columnMap.put("student_sn", sn);
+        }
+        if (Strings.isNotEmpty(clazzNo)){
+            columnMap.put("clazz_no", clazzNo);
         }
         if (null != type) {
             columnMap.put("type", type);
