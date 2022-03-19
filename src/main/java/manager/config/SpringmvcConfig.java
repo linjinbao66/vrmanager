@@ -14,8 +14,15 @@ import java.util.List;
 public class SpringmvcConfig implements WebMvcConfigurer {
 
     private static final List<String> EXCLUDE_PATH =
-            Arrays.asList("/*.html","/img/*.png","/js/*.js","/layui/*.js",
-                    "/css/*.css","/layui/css/*.css","/layui/font/*",
+            Arrays.asList(
+                    "/layui/css/modules/layer/default/*.png",
+                    "/*.html",
+                    "/img/*.png",
+                    "/js/*.js",
+                    "/layui/*.js",
+                    "/css/*.css",
+                    "/layui/css/*.css",
+                    "/layui/font/*",
                     "/layui/css/modules/laydate/default/*.css",
                     "/layui/css/modules/layer/default/*.css",
                     "/layui/css/modules/*.css",

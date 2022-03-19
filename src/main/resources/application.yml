@@ -1,11 +1,11 @@
 server:
   port: 8080
-  servlet:
-    encoding:
-      enabled: true
-      charset: utf8
-      force: true
 spring:
+  http:
+    encoding:
+      charset: utf8
+      enabled: true
+      force: true
   application:
     name: vrmanager
   jackson:

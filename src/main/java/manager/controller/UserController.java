@@ -67,9 +67,9 @@ public class UserController {
     public ResultVo addOne(User user) {
 
         user = validateUser(user);
-        User bysn = userService.getOne(new QueryWrapper<User>().eq("sn", user.getSn()));
+        User bysn = userService.getOne(new QueryWrapper<User>().eq("sn", user.getSn()).eq("clazz_no",user.getClazzNo()));
         if (null != bysn){
-            return ResultVo.renderErr().withRemark("学号或工号重复");
+            return ResultVo.renderErr().withRemark("学号和课程不唯一");
         }
         boolean save = userService.save(user);
         return save ? ResultVo.renderOk().withRemark("添加成功") : ResultVo.renderErr().withRemark("添加失败");
@@ -78,9 +78,9 @@ public class UserController {
     @PutMapping("/")
     public ResultVo updateOne(User user) {
         user = validateUser(user);
-        User bysn = userService.getOne(new QueryWrapper<User>().eq("sn", user.getSn()));
+        User bysn = userService.getOne(new QueryWrapper<User>().eq("sn", user.getSn()).eq("clazz_no",user.getClazzNo()));
         if (null == bysn){
-            return ResultVo.renderErr().withRemark("学号或工号不存在");
+            return ResultVo.renderErr().withRemark("学号或课程不唯一");
         }
         boolean b = userService.updateById(user);
         return b ? ResultVo.renderOk().withRemark("修改成功") : ResultVo.renderErr().withRemark("修改失败");
