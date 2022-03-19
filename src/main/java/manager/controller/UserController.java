@@ -119,6 +119,11 @@ public class UserController {
             validateUser(tmpUser);
         }
 
+        //修正用户信息
+        if (Strings.isNotEmpty(clazzNo)){
+            userList.stream().forEach(user -> {user.setClazzNo(clazzNo);user.setRoleId(1);});
+        }
+
         boolean b = userService.saveBatch(userList);
         return b ? ResultVo.renderOk().withRemark("导入成功") : ResultVo.renderErr().withRemark("导入失败");
     }

@@ -631,7 +631,7 @@
 			async function uploadFile() {
 				let formData = new FormData();
 				formData.append("file", fileupload.files[0]);
-				let response = await fetch('/user/importBatch?calzz='+defaultClazzNo, {
+				let response = await fetch('/user/importBatch?clazzNo='+defaultClazzNo, {
 					method: "POST",
 					headers: { 'admin-token': localStorage.getItem("jwt") },
 					body: formData
