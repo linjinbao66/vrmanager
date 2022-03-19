@@ -71,6 +71,8 @@
 		<script src="layui/layui.js"></script>
 		<script>
 
+			let defaultClazzNo; //全局变量，导入学生的时候使用
+
 			function add(arg1, arg2) {
 				arg1 = arg1.toString(), arg2 = arg2.toString(); // 将传入的数据转化为字符串
 				var arg1Arr = arg1.split("."), // 将小数的数据从小数点的位置拆开
@@ -447,6 +449,7 @@
 					}
 					
 					if (obj.event === 'manageStudent') {
+						defaultClazzNo = data.clazzNo;
 						layer.open({
 							type: 1,
 							title: '学生管理',
@@ -628,11 +631,22 @@
 			async function uploadFile() {
 				let formData = new FormData();
 				formData.append("file", fileupload.files[0]);
-				await fetch('/user/importBatch', {
+				let response = await fetch('/user/importBatch?calzz='+defaultClazzNo, {
 					method: "POST",
 					headers: { 'admin-token': localStorage.getItem("jwt") },
 					body: formData
-				}).then(response => response.json()).catch(error => console.error('Error:', error)).then(response => console.log('Success:', response));
+				});
+				let res = await response.json();
+				console.log(res)
+				if (res.code != 200) {
+					layer.msg(res.msg, function(){
+						location.reload();
+					})
+				} else {
+					layer.msg(res.msg, function(){
+						location.reload();
+					});
+				}
 			}
 		</script>
 

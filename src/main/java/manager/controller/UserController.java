@@ -105,6 +105,7 @@ public class UserController {
     @ApiOperation(value = "从excel批量导入")
     @PostMapping("/importBatch")
     public ResultVo importBatch(
+            @RequestParam(value = "clazzNo", required = false)String clazzNo,
             @RequestParam("file") MultipartFile importBatch) throws Exception {
         ExcelReader reader = ExcelUtil.getReader(importBatch.getInputStream());
         List<User> userList = reader.readAll(User.class);
