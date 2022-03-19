@@ -195,7 +195,9 @@ public class ClazzController {
         if(StrUtil.isNotEmpty(clazzNo)){
             queryWrapper = queryWrapper.eq("clazz_no", clazzNo);
         }
-        List<User> studeList =  userService.list(queryWrapper.eq("role_id", 1));//获取班级下所有学生
+        Page<User> p = new Page<>(page, limit);
+        Page<User> userPage = userService.page(p,queryWrapper.eq("role_id", 1));//获取班级下所有学生
+        List<User> studeList = userPage.getRecords();
         Clazz clazz = clazzService.getOne(new QueryWrapper<Clazz>().eq("id", clazzId).or().eq("clazz_no", clazzNo));//获取班级
         for(User student : studeList){
             //遍历学生
@@ -237,7 +239,7 @@ public class ClazzController {
         ResultVo<Object> vo = new ResultVo<>();
         vo.setCode(0);
         vo.setData(vo2List);
-        vo.setCount((long) vo2List.size());
+        vo.setCount(userPage.getTotal());
         vo.setMsg("查询班级成绩成功");
         return vo;
     }
