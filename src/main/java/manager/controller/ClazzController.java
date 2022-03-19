@@ -20,11 +20,13 @@ import manager.util.CodeEnum;
 import manager.vo.ClazzScoreVo2;
 import manager.vo.ClazzVo;
 import manager.vo.ResultVo;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,6 +42,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/clazz")
 public class ClazzController {
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     IClazzService clazzService;
@@ -60,6 +65,18 @@ public class ClazzController {
         Map<String, Object> columnMap = new HashMap<>();
         if (null != name){
             columnMap.put("name", name);
+        }
+        Integer roleId = (Integer) request.getAttribute("roleId");
+        if (null == roleId || 0==roleId){
+
+        }else if (2==roleId){
+            //教师权限
+            String sn = (String) request.getAttribute("sn");
+            if (Strings.isNotEmpty(sn)){
+                columnMap.put("teacher_sn", sn);
+            }
+        }else if (1==roleId){
+            throw new BizException(CodeEnum.ACCESS_DENIED);
         }
         QueryWrapper<Clazz> queryWrapper = new QueryWrapper<Clazz>().allEq(columnMap);
         Page<Clazz> p = new Page<>(pageNum, pageSize);

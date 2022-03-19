@@ -50,7 +50,7 @@ public class SystemController {
         if (null == user){
             return ResultVo.renderErr().withRemark("用户名或者密码错误");
         }
-        String token = TokenUtil.sign(username,password);
+        String token = TokenUtil.sign(username,password,user.getRoleId());
         if (token != null){
             Map<String,Object> map = new HashMap<>();
             user.setPassword(null);
