@@ -36,17 +36,23 @@ public class SystemController {
     @ApiOperation(value = "登录接口")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "username", value = "用户名"),
-            @ApiImplicitParam(name = "password", value = "密码")
+            @ApiImplicitParam(name = "password", value = "密码"),
+            @ApiImplicitParam(name = "clazzNo", value = "班级编号")
     })
     @PostMapping(value = "/login")
     public ResultVo login(
             @RequestParam(value = "username")String username,
-            @RequestParam(value = "password")String password
+            @RequestParam(value = "password")String password,
+            @RequestParam(value = "clazzNo", required = false) String clazzNo
     ) throws IOException {
         if (Strings.isBlank(username) || Strings.isBlank(password)){
             return ResultVo.renderErr(CodeEnum.ERR).withRemark("用户名和密码错误");
         }
-        User user = userService.getOne(new QueryWrapper<User>().eq("sn", username).eq("password", password));
+        QueryWrapper<User> wrapper = new QueryWrapper<User>().eq("sn", username).eq("password", password);
+        if(Strings.isNotEmpty(clazzNo)){
+            wrapper.eq("clazz_no", clazzNo);
+        }
+        User user = userService.getOne(wrapper);
         if (null == user){
             return ResultVo.renderErr().withRemark("用户名或者密码错误");
         }

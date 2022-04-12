@@ -51,6 +51,15 @@
 				<form class="layui-form layui-form-pane">
 					<!-- 提示：如果你不想用form，你可以换成div等任何一个普通元素 -->
 					<div class="layui-form-item">
+						<label class="layui-form-label">班级</label>
+						<div class="layui-input-inline">
+							<select name="clazz" id="clazz">
+								<option value="">学生请选择班级</option>
+							</select>
+						</div>
+						<i class="layui-icon layui-icon-read" style="font-size: 30px; color: #1E9FFF;"></i>
+					</div>
+					<div class="layui-form-item">
 						<label class="layui-form-label">用户账号</label>
 						<div class="layui-input-inline">
 							<input type="username" name="username" required lay-verify="username"
@@ -92,12 +101,35 @@
 			layui.use(['form', 'jquery'], function() {
 				var form = layui.form;
 				var $ = layui.jquery;
+				//渲染下拉数据
+				var xhr = new XMLHttpRequest();
+
+				xhr.open('GET', '/clazz/', true);
+				xhr.send();
+
+				xhr.onreadystatechange = function (e) {
+					if (xhr.readyState == 4 && xhr.status == 200) {
+						// console.log(xhr.responseText);
+						var json = JSON.parse(xhr.responseText);
+						var data = json.data;
+						var select= document.getElementById('clazz');
+						for (var i=0;i<data.length;i++) {
+							var option = document.createElement("option");
+							option.setAttribute("value", data[i].clazzNo);
+							option.innerText = data[i].clazzNo;
+							select.appendChild(option)
+						}
+						form.render();
+					};
+				};
+
 				//监听提交
 				form.on('submit(formDemo)', function(data) {
 					console.log(data)
 					var param = {
 						'username': data.field.username,
-						'password': data.field.password
+						'password': data.field.password,
+						'clazzNo': data.field.clazz
 					}
 					$.ajax({
 						url: "/system/login",

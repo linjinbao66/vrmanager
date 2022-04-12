@@ -31,6 +31,7 @@ public class SpringmvcConfig implements WebMvcConfigurer {
                     "/admin/login",
                     "/doc.html",
                     "/",
+                    "/clazz/",
                     "/system/sms");
 
     @Override
