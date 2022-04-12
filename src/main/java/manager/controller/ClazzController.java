@@ -76,7 +76,7 @@ public class ClazzController {
                 columnMap.put("teacher_sn", sn);
             }
         }else if (1==roleId){
-            throw new BizException(CodeEnum.ACCESS_DENIED);
+            // throw new BizException(CodeEnum.ACCESS_DENIED);
         }
         QueryWrapper<Clazz> queryWrapper = new QueryWrapper<Clazz>().allEq(columnMap);
         Page<Clazz> p = new Page<>(pageNum, pageSize);
