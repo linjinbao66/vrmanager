@@ -26,6 +26,10 @@ public class TokenInterceptor implements HandlerInterceptor {
 
         boolean verify = TokenUtil.verify(token);
         if (verify){
+            String sn = TokenUtil.getUserName(token);
+            Integer roleId = TokenUtil.getRoleid(token);
+            request.setAttribute("sn",sn);//存放的req中
+            request.setAttribute("roleId",roleId);//存放的req中
             return true;
         }
         log.info("拦截器拦截, {}",request.getRequestURL());

@@ -15,7 +15,7 @@
 						<img src="img/1.png" />虚拟实验管理平台
 					</li>
 					<li class="layui-nav-item layui-col-md1" id = "manageClazz">
-						<a href="clazz.html" >班级管理</a>
+						<a href="clazz.html" >课程管理</a>
 					</li>
 					<li class="layui-nav-item layui-this layui-col-md1" id= "manageTeacher">
 					    <a href="javascript:;">教师管理</a>
@@ -46,11 +46,11 @@
 							<script type="text/html" id="toolbarDemo">
 								<div class="layui-btn-container">
 									<button class="layui-btn layui-btn-danger" lay-event="delBatch">批量删除</button>
-									<button type="button" class="layui-btn" id="importBatch"><i class="layui-icon"></i>批量导入</button>
+									<button type="button" class="layui-btn" id="importBatch"><i class="layui-icon"></i>导入教师</button>
 								</div>
 							</script>
 							<script type="text/html" id="bar">
-								<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+								<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除教师</a>
 							</script>
 						</div>
 					</div>
@@ -209,7 +209,7 @@
 				
 				upload.render({
 					elem: '#importBatch'
-					,url: '/user/importBatch'
+					,url: '/user/importBatch?roleId=2'
 					,exts: 'xls|xlsx'
 					,accept: 'file' 
 					,done: function(res){

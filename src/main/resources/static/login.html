@@ -73,7 +73,7 @@
 					<div class="layui-form-item">
 						<div class="layui-input-inline">
 							<button class="layui-btn layui-btn-lg layui-bg-blue" lay-submit lay-filter="formDemo">
-								<i class="layui-icon">&#xe602;</i>立即提交<i class="layui-icon">&#xe603;</i>
+								<i class="layui-icon">&#xe602;</i>立即登录<i class="layui-icon">&#xe603;</i>
 							</button>
 						</div>
 					</div>
@@ -116,7 +116,8 @@
 									window.location.href = "/";
 								}else if(user.roleId === 2){
 									//教师
-									window.location.href = "student.html";
+									// window.location.href = "student.html";
+									window.location.href = "clazz.html";
 								}else if(user.roleId === 0){
 									//管理员
 									window.location.href = "clazz.html";

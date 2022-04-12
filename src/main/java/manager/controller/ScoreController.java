@@ -54,6 +54,7 @@ public class ScoreController {
     @GetMapping("/")
     public ResultVo<Object> scoreList(
             @RequestParam(value = "sn", required = false) String sn,
+            @RequestParam(value = "clazzNo", required = false) String clazzNo,
             @RequestParam(value = "type", required = false) Long type,
             @RequestParam(value = "question", required = false) String question,
             @RequestParam(value = "page", required = false, defaultValue = "1") Integer pageNum,
@@ -61,6 +62,9 @@ public class ScoreController {
         Map<String, Object> columnMap = new HashMap<>();
         if (Strings.isNotEmpty(sn)) {
             columnMap.put("student_sn", sn);
+        }
+        if (Strings.isNotEmpty(clazzNo)){
+            columnMap.put("clazz_no", clazzNo);
         }
         if (null != type) {
             columnMap.put("type", type);
@@ -87,12 +91,16 @@ public class ScoreController {
         return vo;
     }
 
+    //clazzNo班级编号
     @GetMapping("/studentScore")
-    public ResultVo studentScore(@RequestParam(value = "sn") String sn, @RequestParam(value = "type") Long type) {
+    public ResultVo studentScore(
+            @RequestParam(value = "sn") String sn,
+            @RequestParam(value = "clazzNo",required = false)String clazzNo,
+            @RequestParam(value = "type") Long type) {
 
-        User stu = userService.getOne(new QueryWrapper<User>().eq("role_id", 1).eq("sn", sn));
+        User stu = userService.getOne(new QueryWrapper<User>().eq("role_id", 1).eq("sn", sn).eq("clazz_no",clazzNo));
         if (null == stu)
-            return ResultVo.renderErr().withRemark("学生不存在");
+            return ResultVo.renderErr().withRemark("学生不存在").withRemark(sn);
 
         List<Score> scores = scoreService.list(new QueryWrapper<Score>()
                 .eq("student_sn", sn)

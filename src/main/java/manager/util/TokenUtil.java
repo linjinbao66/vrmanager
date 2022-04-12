@@ -20,7 +20,7 @@ public class TokenUtil {
      * @param **password**
      * @return
      */
-    public static String sign(String username, String password) {
+    public static String sign(String username, String password,Integer roleId) {
         try {
             // 设置过期时间
             Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
@@ -35,6 +35,7 @@ public class TokenUtil {
                     .withHeader(header)
                     .withClaim("username", username)
                     .withClaim("password", password)
+                    .withClaim("roleId", roleId)
                     .withExpiresAt(date)
                     .sign(algorithm);
         } catch (Exception e) {
@@ -63,13 +64,24 @@ public class TokenUtil {
     }
     /**
      * 从token中获取username信息
+     * 此处username等同于sn
      * @param **token**
      * @return
      */
     public static String getUserName(String token){
         try {
             DecodedJWT jwt = JWT.decode(token);
-            return jwt.getClaim("loginName").asString();
+            return jwt.getClaim("username").asString();
+        } catch (JWTDecodeException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+    //获取角色信息
+    public static Integer getRoleid(String token){
+        try {
+            DecodedJWT jwt = JWT.decode(token);
+            return jwt.getClaim("roleId").asInt();
         } catch (JWTDecodeException e){
             e.printStackTrace();
             return null;

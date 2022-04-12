@@ -20,11 +20,13 @@ import manager.util.CodeEnum;
 import manager.vo.ClazzScoreVo2;
 import manager.vo.ClazzVo;
 import manager.vo.ResultVo;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,6 +42,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/clazz")
 public class ClazzController {
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     IClazzService clazzService;
@@ -60,6 +65,18 @@ public class ClazzController {
         Map<String, Object> columnMap = new HashMap<>();
         if (null != name){
             columnMap.put("name", name);
+        }
+        Integer roleId = (Integer) request.getAttribute("roleId");
+        if (null == roleId || 0==roleId){
+
+        }else if (2==roleId){
+            //教师权限
+            String sn = (String) request.getAttribute("sn");
+            if (Strings.isNotEmpty(sn)){
+                columnMap.put("teacher_sn", sn);
+            }
+        }else if (1==roleId){
+            throw new BizException(CodeEnum.ACCESS_DENIED);
         }
         QueryWrapper<Clazz> queryWrapper = new QueryWrapper<Clazz>().allEq(columnMap);
         Page<Clazz> p = new Page<>(pageNum, pageSize);
@@ -160,8 +177,9 @@ public class ClazzController {
         return b ? ResultVo.renderOk().withRemark("导入成功") : ResultVo.renderErr().withRemark("导入失败");
     }
 
+    //1. 查询出班级的所有学生
+    //2. 查询每个学生成绩
     @ApiOperation(value = "获取班级下的所有学生成绩")
-    @ApiImplicitParam(name = "id", value = "班级id")
     @GetMapping("/score")
     public ResultVo score(
             @RequestParam(value = "clazzId", required = false)Long clazzId,
@@ -177,41 +195,51 @@ public class ClazzController {
         if(StrUtil.isNotEmpty(clazzNo)){
             queryWrapper = queryWrapper.eq("clazz_no", clazzNo);
         }
-        List<User> studeList =  userService.list(queryWrapper.eq("role_id", 1));//获取班级下所有学生
+        Page<User> p = new Page<>(page, limit);
+        Page<User> userPage = userService.page(p,queryWrapper.eq("role_id", 1));//获取班级下所有学生
+        List<User> studeList = userPage.getRecords();
         Clazz clazz = clazzService.getOne(new QueryWrapper<Clazz>().eq("id", clazzId).or().eq("clazz_no", clazzNo));//获取班级
         for(User student : studeList){
             //遍历学生
             List<Score> scores = scoreService.list(new QueryWrapper<Score>().eq("student_sn", student.getSn()).isNotNull("questionid"));
-            if(CollUtil.isEmpty(scores)) continue;
-
-            long maxQuestionIdScore0 = scores.stream().filter(score -> score.getType()==0).mapToLong(Score::getQuestionid).max().orElse(0l);//理论成绩的最大值
-            List<Score> scores0 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore0))
-            .collect(Collectors.toList());
-            if(0 == maxQuestionIdScore0) continue;
             ClazzScoreVo2 vo2 = new ClazzScoreVo2();
-            vo2.setSn(student.getSn());
-            vo2.setName(null == clazz ? null : clazz.getName());
-            if(CollUtil.isNotEmpty(scores0)){
-                vo2.setCreateDate(scores0.get(0).getCreateDate());
+            if(CollUtil.isEmpty(scores)) {
+                //学生没有成绩情况也要返回值
+                vo2.setScore0(0);
+                vo2.setScore1(0);
+                vo2.setStudentName(student.getUsername());
+                vo2.setOperationTimes(0l);
+                vo2.setSn(student.getSn());
+                vo2.setName(null == clazz ? null : clazz.getName());
+            }else {
+                long maxQuestionIdScore0 = scores.stream().filter(score -> score.getType()==0).mapToLong(Score::getQuestionid).max().orElse(0l);//理论成绩的最大值
+                List<Score> scores0 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore0))
+                        .collect(Collectors.toList());
+                if(0 == maxQuestionIdScore0) continue;
+                vo2.setSn(student.getSn());
+                vo2.setName(null == clazz ? null : clazz.getName());
+                if(CollUtil.isNotEmpty(scores0)){
+                    vo2.setCreateDate(scores0.get(0).getCreateDate());
+                }
+                double score0 = scores0.stream().filter(score->score.getType().equals(0)).mapToDouble(Score::getScore).sum();//理论总成绩
+
+                long maxQuestionIdScore1 = scores.stream().filter(score -> score.getType()==1).mapToLong(Score::getQuestionid).max().orElse(0l);//实操成绩最大值
+
+                List<Score> scores1 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore1)).collect(Collectors.toList());
+                double score1 = scores1.stream().filter(score->score.getType().equals(1)).mapToDouble(Score::getScore).sum();//实操总成绩
+                vo2.setScore0(score0);
+                vo2.setScore1(score1);
+                vo2.setStudentName(student.getUsername());
+                vo2.setOperationTimes((long) (scores0.size() + scores1.size()));
             }
-            double score0 = scores0.stream().filter(score->score.getType().equals(0)).mapToDouble(Score::getScore).sum();//理论总成绩
-            
-            long maxQuestionIdScore1 = scores.stream().filter(score -> score.getType()==1).mapToLong(Score::getQuestionid).max().orElse(0l);//实操成绩最大值
-            
-            List<Score> scores1 = scores.stream().filter(score -> score.getQuestionid().equals(maxQuestionIdScore1))
-            .collect(Collectors.toList());
-            double score1 = scores1.stream().filter(score->score.getType().equals(1)).mapToDouble(Score::getScore).sum();//实操总成绩
-            vo2.setScore0(score0);
-            vo2.setScore1(score1);
-            vo2.setStudentName(student.getUsername());
-            vo2.setOperationTimes((long) (scores0.size() + scores1.size()));
+            vo2.setClazzNo(clazzNo);
             vo2List.add(vo2);
         }
         // Collections.sort(vo2List, c);
         ResultVo<Object> vo = new ResultVo<>();
         vo.setCode(0);
         vo.setData(vo2List);
-        vo.setCount((long) vo2List.size());
+        vo.setCount(userPage.getTotal());
         vo.setMsg("查询班级成绩成功");
         return vo;
     }
