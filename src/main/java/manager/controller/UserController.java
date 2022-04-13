@@ -15,7 +15,6 @@ import manager.service.IUserService;
 import manager.util.BizException;
 import manager.util.CodeEnum;
 import manager.vo.ResultVo;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/user")
@@ -73,9 +71,11 @@ public class UserController {
                 return vo;
             }
             queryWrapper.ne("clazz_no","");
-            for (Clazz clazz : clazzList){
-                queryWrapper.or().eq("clazz_no",clazz.getClazzNo());
-            }
+            if(clazzNo == null){
+                for (Clazz clazz : clazzList){
+                    queryWrapper.or().eq("clazz_no",clazz.getClazzNo());
+                }
+            }  
         }else if (1==myroleid){
             throw new BizException(CodeEnum.ACCESS_DENIED);
         }
