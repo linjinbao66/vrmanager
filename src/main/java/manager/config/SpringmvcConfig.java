@@ -1,6 +1,7 @@
 package manager.config;
 
 import manager.util.TokenInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -12,6 +13,9 @@ import java.util.List;
 
 @Configuration
 public class SpringmvcConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private TokenInterceptor tokenInterceptor;
 
     private static final List<String> EXCLUDE_PATH =
             Arrays.asList(

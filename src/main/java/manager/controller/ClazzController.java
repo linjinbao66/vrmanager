@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import manager.entity.Clazz;
 import manager.entity.Score;
 import manager.entity.User;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
  * @since 2021-12-10
  */
 @RestController
+@Slf4j
 @RequestMapping("/clazz")
 public class ClazzController {
 
@@ -67,6 +69,7 @@ public class ClazzController {
             columnMap.put("name", name);
         }
         Integer roleId = (Integer) request.getAttribute("roleId");
+        log.info("roleId = {}", roleId);
         if (null == roleId || 0==roleId){
 
         }else if (2==roleId){
