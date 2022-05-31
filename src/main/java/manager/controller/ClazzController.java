@@ -233,7 +233,8 @@ public class ClazzController {
                 vo2.setScore0(score0);
                 vo2.setScore1(score1);
                 vo2.setStudentName(student.getUsername());
-                vo2.setOperationTimes((long) (scores0.size() + scores1.size()));
+                long operationTimes = scores.stream().collect(Collectors.groupingBy(Score::getOperationTimes)).size();
+                vo2.setOperationTimes(operationTimes);
             }
             vo2.setClazzNo(clazzNo);
             vo2List.add(vo2);
