@@ -31,7 +31,7 @@ public class Knife4jConfiguration {
                         .build())
                 .groupName("1.0版本")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("manager.controller"))
+                .apis(RequestHandlerSelectors.basePackage("vrmanager.controller"))
                 .paths(PathSelectors.any())
                 .build()
                 .securitySchemes(securitySchemes());
