@@ -12,14 +12,12 @@ import java.util.List;
 
 @Configuration
 public class SpringMvcConfig extends WebMvcConfigurerAdapter implements WebMvcConfigurer {
-
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("forward:/login.html");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
         super.addViewControllers(registry);
     }
-
     private static final List<String> EXCLUDE_PATH =
             Arrays.asList(
                     "/layui/css/modules/layer/default/*.png",
@@ -35,11 +33,11 @@ public class SpringMvcConfig extends WebMvcConfigurerAdapter implements WebMvcCo
                     "/layui/css/modules/*.css",
                     "/*.ico",
                     "/system/login",
+                    "/system/users",
                     "/admin/login",
                     "/doc.html",
-                    "/",
-                    "/clazz/",
-                    "/system/sms");
+                    "/"
+            );
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

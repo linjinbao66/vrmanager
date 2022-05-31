@@ -1,9 +1,7 @@
 package manager.controller;
 
-import cn.hutool.core.lang.Validator;
-import cn.hutool.core.util.RandomUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
+
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Api(tags = "系统管理")
@@ -30,6 +29,23 @@ public class SystemController {
 
     @Autowired
     IUserService userService;
+
+    @GetMapping("/users")
+    public ResultVo users(
+            @RequestParam(value = "username") String username
+    ){
+        if (Strings.isBlank(username)){
+            return ResultVo.renderErr(CodeEnum.ERR).withRemark("用户名错误");
+        }
+        QueryWrapper<User> wrapper = new QueryWrapper<User>().eq("sn", username);
+        List<User> userList = userService.list(wrapper);
+        if (CollUtil.isEmpty(userList)){
+            return ResultVo.renderErr().withRemark("无法查询到用户");
+        }
+        userList.stream().forEach(user -> user.setPassword(null));
+        return ResultVo.renderOk(userList);
+    }
+
 
     @ApiOperation(value = "登录接口")
     @ApiImplicitParams({

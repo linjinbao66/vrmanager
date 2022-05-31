@@ -62,7 +62,7 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">用户账号</label>
 						<div class="layui-input-inline">
-							<input type="username" name="username" required lay-verify="username"
+							<input type="username" name="username" required lay-verify="username" lay-filter="username"
 								placeholder="请输入手机号/学号/工号" autocomplete="off" class="layui-input">
 						</div>
 						<i class="layui-icon" style="font-size: 30px; color: #1E9FFF;"></i>
@@ -97,31 +97,36 @@
 					localStorage.removeItem("userinfo")
 				}
 			};
-		
+
 			layui.use(['form', 'jquery'], function() {
 				var form = layui.form;
 				var $ = layui.jquery;
 				//渲染下拉数据
-				var xhr = new XMLHttpRequest();
-
-				xhr.open('GET', '/clazz/', true);
-				xhr.send();
-
-				xhr.onreadystatechange = function (e) {
-					if (xhr.readyState == 4 && xhr.status == 200) {
-						// console.log(xhr.responseText);
-						var json = JSON.parse(xhr.responseText);
-						var data = json.data;
-						var select= document.getElementById('clazz');
-						for (var i=0;i<data.length;i++) {
-							var option = document.createElement("option");
-							option.setAttribute("value", data[i].clazzNo);
-							option.innerText = data[i].clazzNo;
-							select.appendChild(option)
-						}
-						form.render();
+				$('input[name=username]').change(function(data) {
+					console.log(data);
+					let sn = $('input[name=username]').val();
+					var xhr = new XMLHttpRequest();
+					xhr.open('GET', '/system/users?username='+sn, true);
+					xhr.send();
+					xhr.onreadystatechange = function (e) {
+						if (xhr.readyState == 4 && xhr.status == 200) {
+							console.log(xhr.responseText);
+							var json = JSON.parse(xhr.responseText);
+							var data = json.data;
+							var select= document.getElementById('clazz');
+							while (select.hasChildNodes()){
+								select.removeChild(select.firstChild);
+							}
+							for (var i=0;i<data.length;i++) {
+								var option = document.createElement("option");
+								option.setAttribute("value", data[i].clazzNo);
+								option.innerText = data[i].clazzNo;
+								select.appendChild(option)
+							}
+							form.render();
+						};
 					};
-				};
+				});
 
 				//监听提交
 				form.on('submit(formDemo)', function(data) {

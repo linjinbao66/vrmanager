@@ -18,9 +18,7 @@ import java.util.List;
 @Configuration
 @EnableSwagger2WebMvc
 public class Knife4jConfiguration {
-
     private static final String AUTH_HEADER_NAME = "admin-token";
-
     @Bean(value = "defaultApi2")
     public Docket defaultApi2() {
         Docket docket=new Docket(DocumentationType.SWAGGER_2)
@@ -31,16 +29,14 @@ public class Knife4jConfiguration {
                         .build())
                 .groupName("1.0版本")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("vrmanager.controller"))
+                .apis(RequestHandlerSelectors.basePackage("manager.controller"))
                 .paths(PathSelectors.any())
                 .build()
                 .securitySchemes(securitySchemes());
 
         return docket;
     }
-
     private List<SecurityScheme> securitySchemes() {
         return Arrays.asList(new ApiKey(AUTH_HEADER_NAME, "auth", In.HEADER.name()));
     }
-
 }

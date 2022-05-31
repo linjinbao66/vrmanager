@@ -26,13 +26,10 @@ import java.util.*;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
     @Autowired
     IUserService userService;
-
     @Autowired
     IClazzService clazzService;
-
     @GetMapping("/")
     public ResultVo users(
             HttpServletRequest request,
