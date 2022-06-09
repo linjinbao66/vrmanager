@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TokenUtil {
-    private static final long EXPIRE_TIME = 120 * 60 * 1000;
+    private static final long EXPIRE_TIME = 2 * 120 * 60 * 1000;
     private static final String TOKEN_SECRET = "thefirsttoken123";
 
     /**
