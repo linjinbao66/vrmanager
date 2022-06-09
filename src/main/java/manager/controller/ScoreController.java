@@ -105,6 +105,7 @@ public class ScoreController {
         List<Score> scores = scoreService.list(new QueryWrapper<Score>()
                 .eq("student_sn", sn)
                 .eq("type", type)
+                .eq("clazz_no", clazzNo)
                 .isNotNull("questionid"));
         if (CollectionUtil.isEmpty(scores))
             return ResultVo.renderErr().withRemark("无法查询到该学生成绩");

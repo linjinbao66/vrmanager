@@ -204,7 +204,7 @@ public class ClazzController {
         Clazz clazz = clazzService.getOne(new QueryWrapper<Clazz>().eq("id", clazzId).or().eq("clazz_no", clazzNo));//获取班级
         for(User student : studeList){
             //遍历学生
-            List<Score> scores = scoreService.list(new QueryWrapper<Score>().eq("student_sn", student.getSn()).isNotNull("questionid"));
+            List<Score> scores = scoreService.list(new QueryWrapper<Score>().eq("student_sn", student.getSn()).eq("clazz_no", clazzNo).isNotNull("questionid"));
             ClazzScoreVo2 vo2 = new ClazzScoreVo2();
             if(CollUtil.isEmpty(scores)) {
                 //学生没有成绩情况也要返回值
