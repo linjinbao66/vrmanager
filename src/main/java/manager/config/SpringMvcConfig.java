@@ -1,18 +1,23 @@
 package manager.config;
 
 import manager.util.TokenInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.core.Ordered;
+import org.springframework.web.servlet.config.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-public class SpringmvcConfig implements WebMvcConfigurer {
-
+public class SpringMvcConfig extends WebMvcConfigurerAdapter implements WebMvcConfigurer {
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("forward:/login.html");
+        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        super.addViewControllers(registry);
+    }
     private static final List<String> EXCLUDE_PATH =
             Arrays.asList(
                     "/layui/css/modules/layer/default/*.png",
@@ -28,10 +33,11 @@ public class SpringmvcConfig implements WebMvcConfigurer {
                     "/layui/css/modules/*.css",
                     "/*.ico",
                     "/system/login",
+                    "/system/users",
                     "/admin/login",
                     "/doc.html",
-                    "/",
-                    "/system/sms");
+                    "/"
+            );
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

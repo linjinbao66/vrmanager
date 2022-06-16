@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import manager.entity.Clazz;
 import manager.entity.Score;
 import manager.entity.User;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
  * @since 2021-12-10
  */
 @RestController
+@Slf4j
 @RequestMapping("/clazz")
 public class ClazzController {
 
@@ -67,6 +69,7 @@ public class ClazzController {
             columnMap.put("name", name);
         }
         Integer roleId = (Integer) request.getAttribute("roleId");
+        log.info("roleId = {}", roleId);
         if (null == roleId || 0==roleId){
 
         }else if (2==roleId){
@@ -76,7 +79,7 @@ public class ClazzController {
                 columnMap.put("teacher_sn", sn);
             }
         }else if (1==roleId){
-            throw new BizException(CodeEnum.ACCESS_DENIED);
+            // throw new BizException(CodeEnum.ACCESS_DENIED);
         }
         QueryWrapper<Clazz> queryWrapper = new QueryWrapper<Clazz>().allEq(columnMap);
         Page<Clazz> p = new Page<>(pageNum, pageSize);
@@ -201,7 +204,7 @@ public class ClazzController {
         Clazz clazz = clazzService.getOne(new QueryWrapper<Clazz>().eq("id", clazzId).or().eq("clazz_no", clazzNo));//获取班级
         for(User student : studeList){
             //遍历学生
-            List<Score> scores = scoreService.list(new QueryWrapper<Score>().eq("student_sn", student.getSn()).isNotNull("questionid"));
+            List<Score> scores = scoreService.list(new QueryWrapper<Score>().eq("student_sn", student.getSn()).eq("clazz_no", clazzNo).isNotNull("questionid"));
             ClazzScoreVo2 vo2 = new ClazzScoreVo2();
             if(CollUtil.isEmpty(scores)) {
                 //学生没有成绩情况也要返回值
@@ -230,7 +233,8 @@ public class ClazzController {
                 vo2.setScore0(score0);
                 vo2.setScore1(score1);
                 vo2.setStudentName(student.getUsername());
-                vo2.setOperationTimes((long) (scores0.size() + scores1.size()));
+                long operationTimes = scores.stream().collect(Collectors.groupingBy(Score::getOperationTimes)).size();
+                vo2.setOperationTimes(operationTimes);
             }
             vo2.setClazzNo(clazzNo);
             vo2List.add(vo2);

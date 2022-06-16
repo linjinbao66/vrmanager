@@ -1,6 +1,7 @@
 package manager.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,9 +11,11 @@ import javax.servlet.http.HttpServletResponse;
  * 自定义token拦截器
  */
 @Slf4j
+@Component
 public class TokenInterceptor implements HandlerInterceptor {
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)throws Exception {
+    public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response, Object handler)throws Exception {
 
         response.setHeader("Content-Type", "text/html;charset=UTF-8");
         response.setCharacterEncoding("utf-8");

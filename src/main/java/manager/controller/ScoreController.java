@@ -105,6 +105,7 @@ public class ScoreController {
         List<Score> scores = scoreService.list(new QueryWrapper<Score>()
                 .eq("student_sn", sn)
                 .eq("type", type)
+                .eq("clazz_no", clazzNo)
                 .isNotNull("questionid"));
         if (CollectionUtil.isEmpty(scores))
             return ResultVo.renderErr().withRemark("无法查询到该学生成绩");
@@ -134,7 +135,7 @@ public class ScoreController {
             return ResultVo.renderErr().withRemark("类型可选值为0理论，1考核");
         }
 
-        User bySn = userService.getOne(new QueryWrapper<User>().eq("sn", score.getStudentSn()));
+        User bySn = userService.getOne(new QueryWrapper<User>().eq("sn", score.getStudentSn()).eq("clazz_no", score.getClazzNo()));
         if (null == bySn) {
             return ResultVo.renderErr().withRemark("学生不存在");
         }
@@ -163,13 +164,14 @@ public class ScoreController {
         if (Strings.isEmpty(score.getStudentSn())) {
             return ResultVo.renderErr().withRemark("请关联学生学号");
         }
-        User bySn = userService.getOne(new QueryWrapper<User>().eq("sn", score.getStudentSn()));
+        User bySn = userService.getOne(new QueryWrapper<User>().eq("sn", score.getStudentSn()).eq("clazz_no", score.getClazzNo()));
         if (null == bySn) {
             return ResultVo.renderErr().withRemark("学生不存在");
         }
         boolean b = scoreService.saveOrUpdate(score, new QueryWrapper<Score>()
                 .eq("questionid", score.getQuestionid())
                 .eq("student_sn", score.getStudentSn())
+                .eq("clazz_no", score.getClazzNo())
                 .eq("type", score.getType()));
         return b ? ResultVo.renderOk().withRemark("更新成绩成功") : ResultVo.renderErr().withRemark("更新成绩失败");
     }
