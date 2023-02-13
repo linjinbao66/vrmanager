@@ -4,7 +4,7 @@
 
 - 下载
 
-  `git clone https://github.com/linjinbao666/vrmanager`
+  `git clone https://github.com/linjinbao666/vrmanager.git`
 
 ## 部署文档
 
